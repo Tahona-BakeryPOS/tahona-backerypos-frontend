@@ -1,0 +1,116 @@
+import { expect, Page, test } from '@playwright/test';
+import { copDigits, E2EState, loadState } from '../fixtures';
+
+/**
+ * Criterio de salida del MVP (testing-strategy.md), parte en efectivo: caja vinculada → PIN → abrir caja → dos ventas →
+ * anulación (D-11, supervisor con PIN) → devolución parcial → cierre cuadrado → informe del backoffice con lo mismo.
+ * Corre en orden y comparte la página (un solo turno).
+ */
+test.describe.configure({ mode: 'serial' });
+
+let page: Page;
+let s: E2EState;
+const OPENING = 50_000;
+
+test.beforeAll(async ({ browser }) => {
+  s = loadState();
+  page = await browser.newPage();
+});
+
+test.afterAll(async () => {
+  await page.close();
+});
+
+test('vincula la caja y entra con el PIN del cajero', async () => {
+  await page.goto('/vincular');
+  await page.getByLabel('Código de vinculación').fill(s.pairingCode);
+  await page.getByLabel('Nombre de este equipo').fill('Equipo E2E');
+  await page.getByRole('button', { name: 'Vincular' }).click();
+
+  await page.getByRole('button', { name: s.cashier.name }).click();
+  await page.keyboard.type(s.cashier.pin);
+  await expect(page.getByLabel('Efectivo inicial')).toBeVisible();
+});
+
+test('abre la caja con efectivo inicial', async () => {
+  await page.getByLabel('Efectivo inicial').fill(String(OPENING));
+  await page.getByRole('button', { name: 'Abrir caja' }).click();
+  await expect(page.getByRole('textbox', { name: 'Buscar producto' })).toBeVisible();
+});
+
+test('vende en efectivo exacto dos veces', async () => {
+  await sell(1);
+  await sell(2);
+});
+
+test('anula la primera venta con autorización del supervisor', async () => {
+  await page.getByRole('link', { name: 'Ventas del turno' }).click();
+  const row = page.getByRole('row').filter({ hasText: copDigits(s.product.price) }).filter({ hasText: 'confirmada' }).first();
+  await row.getByRole('button', { name: 'Anular' }).click();
+
+  await page.getByLabel('Motivo').selectOption('Error de digitación');
+  await authorize();
+  await expect(page.getByRole('row').filter({ hasText: 'anulada' })).toHaveCount(1);
+});
+
+test('devuelve una unidad de la segunda venta', async () => {
+  const row = page.getByRole('row').filter({ hasText: copDigits(s.product.price * 2) }).filter({ hasText: 'confirmada' }).first();
+  await row.getByRole('button', { name: 'Devolver' }).click();
+
+  await page.getByLabel(`Cantidad a devolver de ${s.product.name}`).fill('1');
+  await page.getByLabel('Motivo').fill('Pan quemado (E2E)');
+  await authorize();
+  await expect(page.getByText('Devolución registrada')).toBeVisible();
+  await expect(row).toContainText(copDigits(s.product.price));
+});
+
+test('cierra la caja sin diferencia', async () => {
+  // Esperado = inicial + 2 ventas − anulación − devolución de una unidad.
+  const expected = OPENING + s.product.price * 3 - s.product.price - s.product.price;
+  await page.getByRole('button', { name: 'Cerrar caja' }).click();
+  await page.getByLabel('Efectivo contado').fill(String(expected));
+  await page.getByRole('dialog').getByRole('button', { name: 'Cerrar caja' }).click();
+  await expect(page.getByRole('button', { name: 'Salir' })).toBeVisible();
+  await expect(page.getByRole('dialog')).toContainText(copDigits(expected));
+});
+
+test('el informe del backoffice refleja ventas, anulación y devolución', async () => {
+  await page.goto('/backoffice/ingresar');
+  await page.getByLabel('Correo').fill(s.ownerEmail);
+  await page.getByLabel('Contraseña').fill(s.ownerPassword);
+  await page.getByRole('button', { name: /Entrar|Ingresar/ }).click();
+  const choose = page.getByRole('button', { name: /./ }).filter({ hasNotText: 'Administración de la plataforma' });
+  if (await page.getByRole('heading', { name: '¿Dónde vas a trabajar?' }).isVisible().catch(() => false)) await choose.first().click();
+
+  await page.goto('/backoffice/informes/ventas');
+  await page.getByLabel('Sucursal').selectOption({ label: s.branchName });
+  const kpi = (label: string) => page.locator('.kpi').filter({ hasText: label });
+  await expect(kpi('Vendido').first()).toContainText(copDigits(s.product.price * 2));
+  await expect(kpi('Devuelto')).toContainText(copDigits(s.product.price));
+  await expect(kpi('Neto')).toContainText(copDigits(s.product.price));
+  await expect(kpi('Anuladas')).toContainText(copDigits(s.product.price));
+});
+
+async function sell(units: number): Promise<void> {
+  const tile = page.getByRole('button', { name: new RegExp(`^${escape(s.product.name)},`) });
+  for (let i = 0; i < units; i++) await tile.click();
+  await page.getByRole('button', { name: /^Cobrar/ }).click();
+
+  const dialog = page.getByRole('dialog');
+  await dialog.getByRole('radio', { name: 'Efectivo' }).click();
+  await dialog.getByRole('button', { name: 'Exacto' }).click();
+  await dialog.getByRole('button', { name: 'Cobrar', exact: true }).click();
+  await expect(page.getByText('Venta confirmada')).toBeVisible();
+  await page.getByRole('button', { name: 'Nueva venta' }).click();
+}
+
+/** El cajero no tiene el permiso: autoriza el supervisor con su PIN (OwnerAuthComponent). */
+async function authorize(): Promise<void> {
+  await page.getByLabel('Quién autoriza').selectOption({ label: s.supervisor.name });
+  await page.getByLabel('PIN').fill(s.supervisor.pin);
+  await page.getByRole('button', { name: 'Autorizar' }).click();
+}
+
+function escape(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
