@@ -1,59 +1,82 @@
-# Pos
+# Tahona.BakeryPOS — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.4.
+Aplicación web progresiva (PWA) del punto de venta (POS) SaaS para panaderías en Colombia. Incluye el **POS de caja**,
+pensado para tablet o PC, y el **backoffice** de administración.
 
-## Development server
+La API está en su propio repositorio:
+[tahona-backerypos-backend](https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend), que además guarda el
+diseño del sistema y el contrato del API.
 
-To start a local development server, run:
+## Qué incluye
 
-```bash
-ng serve
+**POS de caja**
+- Vinculación del equipo a una caja y entrada con PIN.
+- Apertura de caja, ingresos y retiros de efectivo, y cierre del turno.
+- Venta con cobro en el datáfono (Bold), autorización de existencias y comprobante con el estado de la factura.
+- Ventas del turno, anulaciones y devoluciones.
+
+**Backoffice**
+- Plataforma, empresa, sucursales, cajas, usuarios y roles.
+- Catálogo, precios, categorías, unidades e impuestos.
+- Existencias, movimientos y ajustes de inventario.
+- Turnos y cierres, pagos y métodos de pago.
+- Integraciones (Bold), facturación electrónica, numeraciones y facturas.
+- Ventas, devoluciones, informe de ventas, panel de control y auditoría.
+
+Las pantallas se muestran según los permisos del usuario.
+
+## Tecnología
+
+Angular 22 (componentes standalone, signals, `OnPush`) · TypeScript · Vitest · Playwright · service worker (PWA).
+
+## Estructura
+
+```
+src/app/
+  core/       cliente HTTP, modelos del API, autenticación, catálogo, dispositivo, venta y turno
+  features/   backoffice, login, pairing, pos, shift
+  shared/     pipes, notificaciones y utilidades de interfaz
+e2e/          pruebas de extremo a extremo (Playwright)
+docs/         documentación propia del frontend
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Requisitos
 
-## Code scaffolding
+- Node.js 24 y npm
+- La API en ejecución (por defecto en `https://localhost:7246`; ver `proxy.conf.json`)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Puesta en marcha
 
 ```bash
-ng generate --help
+npm ci
+npm start
 ```
 
-## Building
+Abre `http://localhost:4200/`. Las llamadas a `/api` se reenvían a la API mediante `proxy.conf.json`.
 
-To build the project run:
+## Scripts
 
-```bash
-ng build
-```
+| Comando | Descripción |
+|---|---|
+| `npm start` | Servidor de desarrollo |
+| `npm test` | Pruebas unitarias |
+| `npx ng build --configuration production` | Compilación de producción en `dist/pos` |
+| `npm run e2e` | Pruebas E2E con Playwright (ver [`e2e/README.md`](e2e/README.md)) |
+| `npm run e2e:typecheck` | Verifica que las pruebas E2E compilan |
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Docker
 
-## Running unit tests
+El `Dockerfile` compila la aplicación y la sirve con Caddy. En staging y producción, Caddy también termina HTTPS y
+hace de proxy de `/api`; su configuración y el compose de despliegue viven en el repositorio del backend (`deploy/`).
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## CI
 
-```bash
-ng test
-```
+`.github/workflows/ci.yml`: instala dependencias, ejecuta las pruebas, compila para producción, verifica los tipos de
+las pruebas E2E, construye la imagen Docker y publica el resultado de la compilación como artefacto.
 
-## Running end-to-end tests
+## Documentación
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [`CLAUDE.md`](CLAUDE.md) — contexto y convenciones del proyecto
+- [`docs/README.md`](docs/README.md) — índice de documentación
+- [`e2e/README.md`](e2e/README.md) — pruebas E2E
+- Contrato del API y decisiones: carpeta `docs/` del repositorio del backend
