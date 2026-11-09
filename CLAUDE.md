@@ -21,7 +21,7 @@ Pantallas sobre la API v2: ingreso al backoffice (contraseña de un solo uso, el
 plataforma/empresas, sucursales y cajas, puntos de venta, usuarios y roles, vinculación del equipo y entrada con PIN;
 catálogo y precios, categorías, unidades, impuestos, auditoría; existencias, movimientos y ajustes; apertura de caja,
 Caja (ingresos/retiros) y cierre, Turnos y Cierres; Pagos, Métodos de pago e Integraciones (Bold); Facturación
-electrónica, Numeraciones y Facturas electrónicas; la venta del POS (cobro en vivo, autorización de existencias,
+electrónica (opcional por empresa, D-17), Numeraciones y Facturas electrónicas; la venta del POS (cobro en vivo, autorización de existencias,
 comprobante con estado de la factura), Ventas del turno y Ventas; anular y devolver, Devoluciones, Informe de ventas y
 Panel de control. **Se retiró el modo sin conexión de la v1** (el service worker solo cachea la app).
 

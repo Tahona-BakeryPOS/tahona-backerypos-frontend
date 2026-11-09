@@ -24,7 +24,7 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
   `],
   template: `
     <div class="head"><div><h1>Facturación electrónica</h1>
-      <p>Cada venta se factura electrónicamente con Siigo, con los datos del cliente o como consumidor final. Confirma esta regla con tu contador.</p></div></div>
+      <p>La facturación electrónica es opcional y se enciende o apaga por empresa. Encendida, cada venta se factura con Siigo, con los datos del cliente o como consumidor final. Apagada, las ventas se registran sin factura. Confirma con tu contador si estás obligado a facturar.</p></div></div>
     <div class="grid-2">
       <form class="card pad" [formGroup]="form" (ngSubmit)="save()">
         <h2>Conexión con Siigo</h2>
@@ -59,8 +59,8 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
           <div class="field"><label for="fCf">Identificación del consumidor final</label><input id="fCf" inputmode="numeric" formControlName="consumerFinalIdentification" /></div>
           <div class="field"><label for="fRet">Conservar documentos (años)</label><input id="fRet" type="number" min="1" max="50" formControlName="retentionYears" /></div>
         </div>
-        <label class="row small"><input type="checkbox" formControlName="activate" style="width:auto;min-height:auto" /> Facturación activa (exige todo lo anterior)</label>
-        <p class="small muted">El consumidor final y los clientes con NIT deben existir en Siigo. Los productos se crean allí con su SKU la primera vez que se facturan.</p>
+        <label class="row small"><input type="checkbox" formControlName="activate" style="width:auto;min-height:auto" /> Facturar electrónicamente las ventas (para encenderla se exige todo lo anterior)</label>
+        <p class="small muted">Si la apagas, las ventas nuevas quedan sin factura; las facturas y notas crédito que ya estaban en trámite se terminan de enviar. Los cobros con Bold no dependen de este interruptor.El consumidor final y los clientes con NIT deben existir en Siigo. Los productos se crean allí con su SKU la primera vez que se facturan.</p>
         <p class="err small" role="alert">{{ action.error() }}</p>
         <button type="submit" class="primary" [disabled]="form.invalid || action.busy()">Guardar</button>
       </form>

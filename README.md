@@ -79,4 +79,5 @@ las pruebas E2E, construye la imagen Docker y publica el resultado de la compila
 - [`CLAUDE.md`](CLAUDE.md) — contexto y convenciones del proyecto
 - [`docs/README.md`](docs/README.md) — índice de documentación
 - [`e2e/README.md`](e2e/README.md) — pruebas E2E
+- [Guía general para personas no técnicas](https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend/blob/main/docs/guia-general.md) (en el repositorio del backend)
 - Contrato del API y decisiones: carpeta `docs/` del repositorio del backend
