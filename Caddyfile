@@ -1,0 +1,41 @@
+# Caddy: HTTPS automático (Let's Encrypt), PWA estática y proxy de /api hacia el API.
+# DOMAIN, ACME_EMAIL y API_UPSTREAM llegan del .env (deploy/docker-compose.yml).
+# API_UPSTREAM es la URL pública del API, p. ej. https://api.tupanaderia.co. Como el navegador solo habla con DOMAIN,
+# las llamadas a /api/v1 son del mismo origen y no necesitan CORS.
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	# API (el backend se despliega por su lado).
+	handle /api/* {
+		reverse_proxy {$API_UPSTREAM} {
+			header_up Host {upstream_hostport}
+		}
+	}
+
+	# Salud del frontend para el monitoreo externo.
+	handle /health {
+		respond "OK" 200
+	}
+
+	# PWA: el index y los archivos del service worker nunca se cachean, para que una versión nueva llegue a las cajas.
+	handle {
+		root * /srv
+		@nocache path / /index.html /ngsw.json /ngsw-worker.js /safety-worker.js /manifest.webmanifest
+		header @nocache Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}

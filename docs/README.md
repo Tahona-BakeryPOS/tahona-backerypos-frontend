@@ -6,6 +6,9 @@ Qué hay aquí y qué vive en el backend.
 |---|---|
 | Contexto y convenciones para Claude | [`../CLAUDE.md`](../CLAUDE.md) |
 | Pruebas E2E (Playwright) | [`../e2e/README.md`](../e2e/README.md) |
+| Decisiones del frontend | [`decisiones.md`](decisiones.md) |
+| Mockups de las pantallas | [`mockups/`](mockups/) |
+| Despliegue propio (Caddy + proxy del API) | [`../deploy/`](../deploy/) |
 | Contrato HTTP del API | repo backend → `docs/api-contracts.md` |
 | Requisitos y casos de uso | repo backend → `docs/requirements.md`, `docs/estado-casos-de-uso.md` |
 | Decisiones (D-xx / I-xx) | repo backend → `docs/decisions.md` |

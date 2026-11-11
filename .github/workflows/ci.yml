@@ -21,6 +21,17 @@ jobs:
       # Las E2E corren contra staging (frontend/e2e/README.md); en CI solo se comprueba que compilan.
       - run: npm run e2e:typecheck
       - run: docker build -t bakerypos-web:${{ github.sha }} .
+      - name: El compose de despliegue y el Caddyfile son válidos (valores ficticios, sin secretos)
+        working-directory: deploy
+        env:
+          ENVIRONMENT: ci
+          VERSION: ${{ github.sha }}
+          DOMAIN: ci.invalid
+          ACME_EMAIL: ci@ci.invalid
+          API_UPSTREAM: https://api.ci.invalid
+        run: |
+          docker compose -f docker-compose.yml config --quiet
+          docker run --rm -e DOMAIN=ci.invalid -e ACME_EMAIL=ci@ci.invalid -e API_UPSTREAM=https://api.ci.invalid bakerypos-web:${{ github.sha }} caddy validate --config /etc/caddy/Caddyfile
       - uses: actions/upload-artifact@v4
         with:
           name: pos-dist

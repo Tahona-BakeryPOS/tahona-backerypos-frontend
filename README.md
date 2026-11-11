@@ -64,10 +64,16 @@ Abre `http://localhost:4200/`. Las llamadas a `/api` se reenvían a la API media
 | `npm run e2e` | Pruebas E2E con Playwright (ver [`e2e/README.md`](e2e/README.md)) |
 | `npm run e2e:typecheck` | Verifica que las pruebas E2E compilan |
 
-## Docker
+## Docker y despliegue
 
-El `Dockerfile` compila la aplicación y la sirve con Caddy. En staging y producción, Caddy también termina HTTPS y
-hace de proxy de `/api`; su configuración y el compose de despliegue viven en el repositorio del backend (`deploy/`).
+El `Dockerfile` compila la aplicación y la sirve con Caddy, que además termina HTTPS y hace de proxy de `/api` hacia el API
+(`API_UPSTREAM`). El despliegue es propio de este repo y no depende del backend:
+
+```bash
+cd deploy
+cp .env.deploy.example .env.production   # completar DOMAIN, ACME_EMAIL y API_UPSTREAM
+bash ./scripts/deploy.sh .env.production
+```
 
 ## CI
 

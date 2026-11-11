@@ -1,0 +1,30 @@
+# Despliegue del frontend (PWA) en un VPS: un solo contenedor con Caddy (HTTPS + PWA + proxy de /api hacia el API).
+# Un ambiente por VPS, con su propio .env (no versionado, ver .env.deploy.example). Uso:
+#   ./scripts/deploy.sh .env.production
+# Nada sensible en este archivo: todo sale del .env.
+name: bakerypos-web-${ENVIRONMENT:?Define ENVIRONMENT (staging o production) en el .env}
+
+services:
+  web:
+    image: bakerypos-web:${VERSION:?}
+    build:
+      context: ..
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:?Define DOMAIN (dominio público del frontend) en el .env}
+      ACME_EMAIL: ${ACME_EMAIL:?}
+      API_UPSTREAM: ${API_UPSTREAM:?Define API_UPSTREAM (URL pública del API, p. ej. https://api.tupanaderia.co) en el .env}
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  # Nombres fijos por ambiente: conservan los certificados de Let's Encrypt entre despliegues.
+  caddy_data:
+    name: bakerypos_web_${ENVIRONMENT}_caddy_data
+  caddy_config:
+    name: bakerypos_web_${ENVIRONMENT}_caddy_config

@@ -60,5 +60,8 @@ npm run e2e:typecheck
 ## CI/CD y despliegue
 
 - CI: `.github/workflows/ci.yml` (tests, build de producción, typecheck de E2E, build de la imagen Docker).
-- La imagen (`Dockerfile`) compila la app y la sirve con Caddy; en staging/producción el `Caddyfile` y el compose viven en
-  el repo del backend (`deploy/`), que espera este repo clonado junto a él (`FRONTEND_DIR`, por defecto `../../frontend`).
+- La imagen (`Dockerfile`) compila la app y la sirve con Caddy (`Caddyfile`), que además termina HTTPS y hace de proxy de
+  `/api` hacia el API (`API_UPSTREAM`, la URL pública del backend). Así el navegador habla solo con el dominio del frontend
+  y no hace falta CORS.
+- Despliegue propio en `deploy/` (compose, `.env.deploy.example` y `scripts/deploy.sh`): un ambiente por VPS. No depende de
+  ningún archivo del repo del backend; solo necesita saber la URL de su API.
