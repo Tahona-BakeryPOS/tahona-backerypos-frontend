@@ -13,12 +13,12 @@ const FISCAL: Record<string, string> = {
   rejected: 'Factura electrónica rechazada: el administrador debe revisarla',
   in_review: 'Factura electrónica sin confirmar: se está consultando',
 };
-/** Consultas del estado fiscal mientras el comprobante está abierto. */
+/** Fiscal status queries while the receipt is open. */
 const FISCAL_POLLS = 10;
 
 /**
- * HU-6.6: comprobante de la venta confirmada, con el estado de su factura electrónica (Siigo/DIAN). La
- * impresión real queda fuera del MVP; aquí se muestra en pantalla.
+ * US-6.6: receipt of the confirmed sale, with its electronic invoice status (Siigo/DIAN). Real
+ * printing is outside the MVP; here it is shown on screen.
  */
 @Component({
   selector: 'app-receipt-dialog',
@@ -77,7 +77,7 @@ export class ReceiptDialog {
     return FISCAL[status] ?? status;
   }
 
-  /** La factura se envía en segundo plano: el estado se refresca unas veces mientras el comprobante está abierto. */
+  /** The invoice is sent in the background: the status is refreshed a few times while the receipt is open. */
   private poll(n: number): void {
     if (this.timer) clearTimeout(this.timer);
     const s = this.current();

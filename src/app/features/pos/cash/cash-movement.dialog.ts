@@ -11,8 +11,8 @@ import { OwnerAuthComponent } from '../../../shared/owner-auth.component';
 import { ToastService } from '../../../shared/toast.service';
 
 /**
- * HU-5.3: ingreso o retiro de efectivo con motivo. El retiro lo autoriza un superior (caja.retiro): si
- * quien atiende no lo tiene, el superior elige su nombre y digita su PIN.
+ * US-5.3: cash income or withdrawal with a reason. A withdrawal is authorized by a supervisor (cash.withdrawal): if
+ * whoever is serving does not hold it, the supervisor chooses their name and enters their PIN.
  */
 @Component({
   selector: 'app-cash-movement-dialog',
@@ -55,16 +55,16 @@ export class CashMovementDialog {
   readonly kind = input.required<'income' | 'expense'>();
   readonly closed = output<void>();
 
-  protected readonly perm = Perm.cajaRetiro;
+  protected readonly perm = Perm.cashWithdrawal;
   protected readonly isExpense = computed(() => this.kind() === 'expense');
-  protected readonly needsAuthorizer = computed(() => this.isExpense() && !this.session.can(Perm.cajaRetiro));
+  protected readonly needsAuthorizer = computed(() => this.isExpense() && !this.session.can(Perm.cashWithdrawal));
   protected readonly reasons = computed(() => this.cash.reasons().filter((r) => r.kind === this.kind()));
   protected amount: number | null = null;
   protected reasonId = '';
   protected note = '';
   protected readonly error = signal('');
   protected readonly busy = signal(false);
-  /** Reintentar tras una caída de red reusa la clave; cambiar los datos empieza un intento nuevo. */
+  /** Retrying after a network drop reuses the key; changing the data starts a new attempt. */
   private key = newIdempotencyKey();
 
   protected renewKey(): void {

@@ -9,23 +9,23 @@ export const API = '/api/v1';
 
 export type QueryParams = Record<string, string | number | boolean | null | undefined>;
 
-/** Opciones de una sola petición. */
+/** Single-request options. */
 export interface RequestOptions {
-  /** Envía la petición con otro token Bearer (propietario que autoriza) sin tocar la sesión. */
+  /** Sends the request with another Bearer token (the authorizing owner) without touching the session. */
   asToken?: string;
-  /** POST marcado [Idempotent] en la API: exige `Idempotency-Key`. */
+  /** POST marked [Idempotent] in the API: it requires `Idempotency-Key`. */
   idempotencyKey?: string;
-  /** Versión leída (ETag) para `If-Match`; la API la exige en los PUT de datos maestros. */
+  /** Version read (ETag) for `If-Match`; the API requires it on master-data PUTs. */
   ifMatch?: string;
   headers?: Record<string, string>;
 }
 
-/** Clave nueva por intento lógico; reintentar el mismo intento debe reusarla. */
+/** A new key per logical attempt; retrying the same attempt must reuse it. */
 export const newIdempotencyKey = (): string => uuidv7();
 
 /**
- * Cliente HTTP común de los gateways (PosApi, BackofficeApi): convierte cada respuesta en
- * promesa y cada error en ApiError.
+ * Common HTTP client of the gateways (PosApi, BackofficeApi): turns each response into a
+ * promise and each error into an ApiError.
  */
 @Injectable({ providedIn: 'root' })
 export class ApiClient {
@@ -43,7 +43,7 @@ export class ApiClient {
     return this.send(this.http.put<T>(API + path, body, request(opts)));
   }
 
-  /** Archivo binario (p. ej. PDF), con el token de la sesión. */
+  /** Binary file (e.g. PDF), with the session's token. */
   getBlob(path: string, opts?: RequestOptions): Promise<Blob> {
     return this.send(this.http.get(API + path, { responseType: 'blob', ...request(opts) }));
   }

@@ -3,9 +3,9 @@ import { randomInt, randomUUID } from 'node:crypto';
 import { E2EState, STATE_FILE } from './fixtures';
 
 /**
- * Prepara datos propios de esta corrida por la API, dentro de una empresa de pruebas ya existente (su propietario con
- * contraseña definitiva, E2E_OWNER_*): sucursal y caja nuevas, un cajero y un supervisor con PIN, un producto sin
- * control de existencias con precio, y un código de vinculación para la caja. Nunca corre contra producción.
+ * Prepares this run's own data through the API, inside an already existing test company (its owner with a
+ * final password, E2E_OWNER_*): a new branch and cash register, a cashier and a supervisor with a PIN, a product that does not
+ * track stock with a price, and a pairing code for the register. It never runs against production.
  */
 export default async function globalSetup(): Promise<void> {
   const baseUrl = process.env['E2E_BASE_URL'] ?? 'http://localhost:4200';
@@ -33,10 +33,10 @@ export default async function globalSetup(): Promise<void> {
     { branchId: branch.id, code: `C${run}`, name: `Caja E2E ${run}` }, true);
 
   const roles = await api.get<{ id: string; code: string; permissions: string[] }[]>('/roles');
-  const cashierRole = roles.find((r) => r.code === 'CAJERO');
-  const supervisorRole = roles.find((r) => r.permissions.includes('ventas.anular') && r.permissions.includes('devoluciones.aprobar')
-    && r.code !== 'PROPIETARIO') ?? roles.find((r) => r.code === 'PROPIETARIO');
-  if (!cashierRole || !supervisorRole) throw new Error('Faltan los roles del sistema (CAJERO / supervisor).');
+  const cashierRole = roles.find((r) => r.code === 'CASHIER');
+  const supervisorRole = roles.find((r) => r.permissions.includes('sales.void') && r.permissions.includes('returns.approve')
+    && r.code !== 'OWNER') ?? roles.find((r) => r.code === 'OWNER');
+  if (!cashierRole || !supervisorRole) throw new Error('Faltan los roles del sistema (CASHIER / supervisor).');
 
   const cashier = { name: `Cajero ${run}`, pin: pin() };
   const supervisor = { name: `Supervisor ${run}`, pin: pin() };
@@ -80,7 +80,7 @@ function required(name: string): string {
   return v;
 }
 
-/** PIN de 6 dígitos sin repetir todo el mismo dígito. */
+/** 6-digit PIN without repeating the same digit throughout. */
 function pin(): string {
   return String(randomInt(100_000, 999_999));
 }

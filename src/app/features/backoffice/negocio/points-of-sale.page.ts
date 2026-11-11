@@ -8,9 +8,9 @@ import { ToastService } from '../../../shared/toast.service';
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 /**
- * Mi negocio → Puntos de venta: cada caja con sus equipos. "Vincular dispositivo" genera un código
- * de 8 caracteres, de un solo uso y válido 15 minutos, que se escribe en el equipo; "Desvincular"
- * revoca el token de ese equipo.
+ * Mi negocio → Points of sale: each register with its devices. "Vincular dispositivo" generates a code
+ * of 8 characters, single use and valid for 15 minutes, which is typed on the device; "Desvincular"
+ * revokes that device's token.
  */
 @Component({
   selector: 'app-points-of-sale-page',

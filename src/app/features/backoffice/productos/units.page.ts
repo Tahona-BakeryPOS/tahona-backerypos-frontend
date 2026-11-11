@@ -4,7 +4,7 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 const KIND: Record<string, string> = { count: 'Conteo', mass: 'Masa', volume: 'Volumen' };
 
-/** Productos → Unidades: catálogo global de unidades de medida (solo lectura). */
+/** Productos → Units: global catalog of units of measure (read-only). */
 @Component({
   selector: 'app-units-page',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -5,7 +5,7 @@ import { ModalComponent } from '../../../shared/modal.component';
 
 export const DISCOUNT_REASONS = ['Producto del día anterior', 'Cliente frecuente', 'Cortesía', 'Producto con defecto'];
 
-/** CU-03: descuento por línea, en porcentaje (como lo recibe la API) y con motivo obligatorio. */
+/** CU-03: per-line discount, as a percentage (as the API receives it) and with a mandatory reason. */
 @Component({
   selector: 'app-discount-dialog',
   imports: [FormsModule, ModalComponent],

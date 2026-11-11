@@ -9,17 +9,17 @@ import { SessionStore } from '../../core/auth/session.store';
 
 type Step = 'credentials' | 'password' | 'company';
 
-/** Mínimo de la API (ChangePasswordValidator.MinLength). */
+/** The API's minimum (ChangePasswordValidator.MinLength). */
 const MIN_PASSWORD = 10;
 
 const sameAsNew = (g: AbstractControl): ValidationErrors | null =>
   g.get('newPassword')!.value === g.get('confirm')!.value ? null : { mismatch: true };
 
 /**
- * Ingreso al backoffice, desde cualquier equipo (no requiere caja vinculada):
- * correo y contraseña → cambio obligatorio de la contraseña de un solo uso → elegir empresa si
- * tiene varias (D-08) o entrar a la administración de plataforma (D-09). Si se recarga a mitad
- * de camino, retoma el paso pendiente con la sesión guardada.
+ * Backoffice sign-in, from any device (it does not require a paired register):
+ * email and password → mandatory change of the one-time password → choose a company if
+ * there are several (D-08) or enter platform administration (D-09). If reloaded halfway
+ * through, it resumes the pending step with the stored session.
  */
 @Component({
   selector: 'app-backoffice-login-page',
@@ -102,7 +102,7 @@ export class BackofficeLoginPage {
   );
 
   constructor() {
-    // ?paso=empresa: cambiar de empresa desde el menú. Sin él, retoma un ingreso a medias.
+    // ?paso=empresa: switch company from the menu. Without it, it resumes a half-finished sign-in.
     const u = this.session.user();
     const switching = inject(ActivatedRoute).snapshot.queryParamMap.get('paso') === 'empresa';
     if (u?.kind === 'backoffice') {
@@ -115,7 +115,7 @@ export class BackofficeLoginPage {
     if (this.form.invalid) return this.error.set('Escribe un correo válido y la contraseña.');
     await this.run(async () => this.proceed(await this.api.loginPassword(this.form.getRawValue())), (e) => {
       const err = toApiError(e);
-      // 423 USUARIO_BLOQUEADO y 429 traen su propio mensaje con la espera.
+      // 423 USUARIO_BLOQUEADO and 429 bring their own message with the wait.
       return err.status === 401 ? 'Correo o contraseña incorrectos.' : err.message;
     });
     this.form.controls.password.reset();
@@ -134,10 +134,10 @@ export class BackofficeLoginPage {
     return this.run(async () => this.proceed(await this.api.selectCompany(companyId, this.session.refreshToken())));
   }
 
-  /** La sesión sin empresa del administrador ya es la de plataforma. */
+  /** The administrator's session without a company is already the platform one. */
   protected choosePlatform(): void {
     if (this.session.user()?.companyId) {
-      // Desde una sesión de empresa no hay endpoint para volver a la de plataforma: nuevo ingreso.
+      // From a company session there is no endpoint to return to the platform one: sign in again.
       this.cancel();
       return;
     }

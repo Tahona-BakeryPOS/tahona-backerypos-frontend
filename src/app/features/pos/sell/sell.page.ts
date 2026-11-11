@@ -9,7 +9,7 @@ import { productEmoji } from './product-emoji';
 import { TicketComponent } from './ticket.component';
 import { WeightDialog } from './weight.dialog';
 
-/** HU-6.1: pantalla de venta. Categorías y búsqueda a la izquierda, ticket a la derecha; precios vigentes de la sucursal. */
+/** US-6.1: sale screen. Categories and search on the left, ticket on the right; the branch's current prices. */
 @Component({
   selector: 'app-sell-page',
   imports: [FormsModule, CopPipe, TicketComponent, WeightDialog],
@@ -90,7 +90,7 @@ export class SellPage {
     this.weighing.set(null);
   }
 
-  /** Lector de código de barras: escribe el código y envía Enter. */
+  /** Barcode reader: it types the code and sends Enter. */
   protected scan(): void {
     const p = this.catalog.findByCode(this.query());
     if (p) {

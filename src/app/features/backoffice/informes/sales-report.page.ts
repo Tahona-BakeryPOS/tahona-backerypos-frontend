@@ -8,8 +8,8 @@ import { DateRangeComponent, daysAgo } from '../../../shared/date-range.componen
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 /**
- * Informes → Ventas: por día, sucursal, medio de pago y productos más vendidos. Las anuladas no suman; las
- * devoluciones se restan para el neto. Días de Colombia.
+ * Informes → Sales: by day, branch, payment method and best-selling products. Voided ones do not add up; returns are
+ * subtracted for the net. Colombian days.
  */
 @Component({
   selector: 'app-sales-report-page',

@@ -1,6 +1,6 @@
 /**
- * Adaptador sobre Web Storage. El navegador puede negar el acceso (modo privado, cuota),
- * así que ninguna lectura o escritura debe tumbar la app.
+ * Adapter over Web Storage. The browser may deny access (private mode, quota),
+ * so no read or write must bring the app down.
  */
 export class LocalStore<T> {
   constructor(
@@ -22,7 +22,7 @@ export class LocalStore<T> {
       if (value === null) this.storage().removeItem(this.key);
       else this.storage().setItem(this.key, JSON.stringify(value));
     } catch {
-      /* sin almacenamiento disponible: se conserva solo en memoria */
+      /* no storage available: it is kept in memory only */
     }
   }
 }

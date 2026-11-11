@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-/** Íconos de línea (24×24, trazo) para la navegación. Heredan el color del texto. */
+/** Line icons (24×24, stroke) for navigation. They inherit the text color. */
 const PATHS: Record<string, string> = {
   panel: 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z',
   store: 'M4 10v10h16V10M3 10l2-6h14l2 6M3 10h18M9 20v-6h6v6',

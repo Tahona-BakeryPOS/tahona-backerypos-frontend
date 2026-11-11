@@ -6,8 +6,8 @@ import { Permission } from '../core/auth/permissions';
 import { DeviceConfigStore } from '../core/device/device-config.store';
 
 /**
- * Autorización de un superior sobre la sesión del cajero: elige su nombre, valida su PIN contra la
- * API y entrega el token de esa sesión para la operación (no cambia la sesión abierta).
+ * A supervisor's authorization over the cashier's session: they choose their name, their PIN is validated against the
+ * API and it hands over that session's token for the operation (it does not change the open session).
  */
 @Component({
   selector: 'app-owner-auth',

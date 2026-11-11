@@ -18,9 +18,9 @@ const STATUS: Record<string, string> = {
 };
 
 /**
- * Ventas y caja → Pagos: pagos por pasarela con su estado. Un pago pendiente bloquea el cierre de su caja
- * (D-12); si el webhook de Bold no llegó, quien tenga pagos.resolver lo resuelve a mano (I-23): aprobado
- * con el número de aprobación del recibo, rechazado o cancelado (tras verificar en el datáfono).
+ * Ventas y caja → Payments: gateway payments with their status. A pending payment blocks the close of its register
+ * (D-12); if the Bold webhook did not arrive, whoever holds payments.resolve resolves it by hand (I-23): approved
+ * with the approval number from the receipt, declined or cancelled (after checking on the card terminal).
  */
 @Component({
   selector: 'app-payments-page',
@@ -81,7 +81,7 @@ const STATUS: Record<string, string> = {
 })
 export class PaymentsPage {
   private readonly bo = inject(BackofficeApi);
-  protected readonly canResolve = inject(SessionStore).can(Perm.pagosResolver);
+  protected readonly canResolve = inject(SessionStore).can(Perm.paymentsResolve);
   protected readonly action = new AsyncAction(inject(ToastService));
   protected readonly statuses = Object.entries(STATUS);
   protected readonly from = signal(daysAgo(6));

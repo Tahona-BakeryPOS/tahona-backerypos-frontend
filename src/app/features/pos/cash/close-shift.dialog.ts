@@ -12,8 +12,8 @@ import { CopPipe } from '../../../shared/cop.pipe';
 import { ModalComponent } from '../../../shared/modal.component';
 
 /**
- * HU-5.4: el cajero cuenta el efectivo y ve la diferencia en vivo contra el esperado del servidor.
- * Con pagos pendientes el cierre se bloquea (D-12) hasta resolverlos.
+ * US-5.4: the cashier counts the cash and sees the difference live against the server's expected amount.
+ * With pending payments the close is blocked (D-12) until they are resolved.
  */
 @Component({
   selector: 'app-close-shift-dialog',
@@ -102,7 +102,7 @@ export class CloseShiftDialog {
     } catch (e) {
       const err = toApiError(e);
       this.error.set(err.message);
-      // Otro equipo pudo cerrar o registrar pagos: el resumen se refresca.
+      // Another device may have closed or recorded payments: the summary is refreshed.
       if (err.code === 'PAGO_PENDIENTE' || err.code === 'CAJA_CERRADA') void this.cash.load();
     } finally {
       this.busy.set(false);

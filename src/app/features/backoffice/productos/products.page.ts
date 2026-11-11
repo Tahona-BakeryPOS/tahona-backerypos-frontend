@@ -15,9 +15,9 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
 const PAGE_SIZE = 50;
 
 /**
- * Productos → Catálogo (HU-3.1 a 3.3). Precios de lista con impuesto incluido (D-07). Elegir una
- * sucursal muestra el precio que rige allí (el propio o, si no tiene, el base) y su disponibilidad.
- * Un cambio de precio abre una vigencia nueva y la anterior queda en el historial.
+ * Productos → Catalog (US-3.1 to 3.3). List prices with tax included (D-07). Choosing a
+ * branch shows the price in force there (its own or, if it has none, the base one) and its availability.
+ * A price change opens a new validity period and the previous one stays in the history.
  */
 @Component({
   selector: 'app-products-page',
@@ -162,8 +162,8 @@ export class ProductsPage {
   private readonly fb = inject(FormBuilder).nonNullable;
   private readonly session = inject(SessionStore);
   protected readonly action = new AsyncAction(inject(ToastService));
-  protected readonly canManage = this.session.can(Perm.catalogoGestionar);
-  protected readonly canBranchPrice = this.canManage || this.session.can(Perm.preciosSucursal);
+  protected readonly canManage = this.session.can(Perm.catalogManage);
+  protected readonly canBranchPrice = this.canManage || this.session.can(Perm.branchPrices);
   protected readonly pageSize = PAGE_SIZE;
 
   protected readonly q = signal('');

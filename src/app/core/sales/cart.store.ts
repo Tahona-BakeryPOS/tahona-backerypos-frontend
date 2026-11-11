@@ -10,7 +10,7 @@ export interface CartLine {
   discountReason: string | null;
 }
 
-/** Descuento en dinero de la línea (lo que recibe la API), a partir del porcentaje elegido. */
+/** The line's discount in money (what the API receives), from the chosen percentage. */
 export const discountAmount = (l: CartLine): number => round2(round2(l.quantity * l.product.price) * (l.discountPercent / 100));
 
 export const toLineInput = (l: CartLine): LineInput => ({
@@ -22,8 +22,8 @@ export const toLineInput = (l: CartLine): LineInput => ({
 });
 
 /**
- * Venta en curso en la caja (solo en memoria). Los totales son una vista previa: al cobrar, el servidor
- * crea la venta con sus precios vigentes y ese es el total que se cobra.
+ * Sale in progress at the register (memory only). The totals are a preview: when charging, the server
+ * creates the sale with its current prices and that is the total that is charged.
  */
 @Injectable({ providedIn: 'root' })
 export class CartStore {
@@ -32,14 +32,14 @@ export class CartStore {
   private readonly _customer = signal<string | null>(null);
 
   readonly lines = this._lines.asReadonly();
-  /** NIT o cédula para la factura con datos del cliente; null = consumidor final. */
+  /** NIT or ID for the invoice with the customer's data; null = final consumer. */
   readonly customer = this._customer.asReadonly();
   readonly isEmpty = computed(() => this._lines().length === 0);
   readonly totals = computed(() => saleAmounts(this._lines().map(toLineInput)));
 
   add(product: PosProduct, quantity = 1): void {
     this._lines.update((ls) => {
-      // Cada pesada es una línea propia; las unidades del mismo producto se acumulan.
+      // Each weighing is its own line; units of the same product accumulate.
       const same = product.allowsDecimals ? undefined : ls.find((l) => l.product.id === product.id && l.discountPercent === 0);
       return same
         ? ls.map((l) => (l === same ? { ...l, quantity: l.quantity + quantity } : l))
@@ -47,7 +47,7 @@ export class CartStore {
     });
   }
 
-  /** Suma o resta un paso: 1 unidad, o 0,25 en productos por peso. */
+  /** Adds or subtracts one step: 1 unit, or 0.25 for products sold by weight. */
   step(key: number, direction: 1 | -1): void {
     this._lines.update((ls) =>
       ls
@@ -60,7 +60,7 @@ export class CartStore {
     this._lines.update((ls) => ls.filter((l) => l.key !== key));
   }
 
-  /** HU-6.2: el descuento exige motivo (y el permiso ventas.descuento en el servidor). */
+  /** US-6.2: a discount requires a reason (and the sales.discount permission on the server). */
   discount(key: number, percent: number, reason: string): void {
     this._lines.update((ls) => ls.map((l) => (l.key === key ? { ...l, discountPercent: percent, discountReason: percent ? reason : null } : l)));
   }

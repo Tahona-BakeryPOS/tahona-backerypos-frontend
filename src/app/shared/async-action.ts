@@ -3,8 +3,8 @@ import { toApiError } from '../core/api/api-error';
 import { ToastService } from './toast.service';
 
 /**
- * Estado de una acción del usuario (guardar, crear, anular): ocupado, error legible y aviso al
- * terminar. Evita repetir try/catch/finally en cada formulario.
+ * State of a user action (save, create, void): busy, readable error and a notice on
+ * finishing. It avoids repeating try/catch/finally in every form.
  */
 export class AsyncAction {
   readonly busy = signal(false);

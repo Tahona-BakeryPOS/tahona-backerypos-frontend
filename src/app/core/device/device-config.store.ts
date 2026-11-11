@@ -7,20 +7,20 @@ export type PaymentMethodConfig = DeviceSetupDto['paymentMethods'][number];
 export type CashReasonConfig = DeviceSetupDto['cashReasons'][number];
 
 /**
- * Este dispositivo, vinculado a una caja con un código del backoffice. Guarda su credencial
- * (token de dispositivo) y la configuración operativa para trabajar sin conexión.
+ * This device, paired to a register with a code from the backoffice. It stores its credential
+ * (device token) and the operating configuration.
  */
 export interface DeviceConfig {
   deviceId: string;
-  /** Token de dispositivo: habilita el login por PIN y la lista de cajeros. */
+  /** Device token: it enables PIN login and the cashier list. */
   deviceToken: string;
   companyId: string;
   branchId: string;
-  /** La vinculación v2 no devuelve el nombre de la sucursal: vacío hasta que un endpoint lo entregue. */
+  /** Pairing does not return the branch name: empty until an endpoint delivers it. */
   branchName: string;
   cashRegisterId: string;
   cashRegisterName: string;
-  /** Prefijo del consecutivo local del ticket (p. ej. "C1"). */
+  /** Prefix of the ticket's local consecutive number (e.g. "C1"). */
   ticketPrefix: string;
   priceListId: string | null;
   paymentMethods: PaymentMethodConfig[];
@@ -33,7 +33,7 @@ export class DeviceConfigStore {
   private readonly _config = signal<DeviceConfig | null>(this.read());
 
   readonly config = this._config.asReadonly();
-  /** Medios de pago y motivos llegan en fases posteriores; para entrar con PIN basta el token. */
+  /** Payment methods and reasons arrive in later phases; to sign in with a PIN the token is enough. */
   readonly isPaired = computed(() => {
     const c = this._config();
     return !!c?.deviceToken && !!c.cashRegisterId;
@@ -47,7 +47,7 @@ export class DeviceConfigStore {
     this.store.write(c);
   }
 
-  /** Refresca medios de pago y motivos sin perder la vinculación. */
+  /** Refreshes payment methods and reasons without losing the pairing. */
   updateSetup(setup: DeviceSetupDto): void {
     const c = this._config();
     if (c) this.save({ ...c, branchName: setup.branchName, priceListId: setup.defaultPriceListId, paymentMethods: setup.paymentMethods, cashReasons: setup.cashReasons });
@@ -78,7 +78,7 @@ export class DeviceConfigStore {
     };
   }
 
-  /** Configuraciones anteriores (sin token, o de la v1 sin empresa) obligan a vincular de nuevo. */
+  /** Earlier configurations (without a token, or from the previous system without a company) force pairing again. */
   private read(): DeviceConfig | null {
     const c = this.store.read();
     return c?.deviceToken && c.companyId ? c : null;

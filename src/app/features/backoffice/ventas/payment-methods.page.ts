@@ -14,8 +14,8 @@ const KIND: Record<PaymentMethodKind, string> = {
 const GATEWAY: Record<string, string> = { POS: 'Tarjeta', NEQUI: 'Nequi', PAY_BY_QR_BOLD: 'QR Bold' };
 
 /**
- * Ventas y caja → Métodos de pago: los que ofrece la caja al cobrar. Los de Bold se cobran en el datáfono
- * y solo se activan con la integración configurada; datáfono externo y transferencia exigen referencia.
+ * Ventas y caja → Payment methods: those the register offers when charging. Bold ones are charged on the card terminal
+ * and are only activated with the integration configured; external card terminal and transfer require a reference.
  */
 @Component({
   selector: 'app-payment-methods-page',

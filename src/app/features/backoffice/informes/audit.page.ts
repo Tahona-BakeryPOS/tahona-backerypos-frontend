@@ -8,7 +8,7 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 const PAGE_SIZE = 50;
 
-/** Nombre legible de cada tabla auditada (esquema.tabla). Las que no estén aquí se muestran tal cual. */
+/** Readable name of each audited table (schema.table). Those not listed here are shown as they are. */
 const ENTITY_LABELS: Record<string, string> = {
   'org.companies': 'Empresa', 'org.branches': 'Sucursales', 'cash.cash_registers': 'Cajas',
   'sec.users': 'Usuarios', 'sec.memberships': 'Pertenencias', 'sec.roles': 'Roles', 'sec.role_assignments': 'Asignaciones de rol',
@@ -16,11 +16,11 @@ const ENTITY_LABELS: Record<string, string> = {
   'cat.categories': 'Categorías', 'cat.taxes': 'Impuestos', 'cat.products': 'Productos', 'cat.product_prices': 'Precios',
   'cat.branch_products': 'Disponibilidad por sucursal',
 };
-const ACTION: Record<string, string> = { creacion: 'creó', modificacion: 'modificó', eliminacion: 'eliminó' };
-/** Campos técnicos que no aportan al leer el historial. */
+const ACTION: Record<string, string> = { create: 'creó', update: 'modificó', delete: 'eliminó' };
+/** Technical fields that add nothing when reading the history. */
 const HIDDEN = ['Id', 'CompanyId', 'RowVersion', 'CreatedAt', 'CreatedBy', 'ModifiedAt', 'ModifiedBy'];
 
-/** Informes → Auditoría y Configuración → Historial de cambios: quién cambió qué, con antes y después. */
+/** Informes → Audit and Configuración → Change history: who changed what, with before and after. */
 @Component({
   selector: 'app-audit-page',
   imports: [DatePipe, FormsModule],
@@ -83,7 +83,7 @@ export class AuditPage {
     params: () => ({ entity: this.entity(), from: this.from(), to: this.to(), page: this.page() }),
     loader: ({ params: p }) => this.bo.auditLog({
       entity: p.entity || null,
-      // Días completos en la hora local del navegador.
+      // Whole days in the browser's local time.
       from: p.from ? new Date(`${p.from}T00:00:00`).toISOString() : null,
       to: p.to ? new Date(`${p.to}T23:59:59.999`).toISOString() : null,
       page: p.page, pageSize: PAGE_SIZE,
@@ -98,7 +98,7 @@ export class AuditPage {
     return ENTITY_LABELS[e] ?? e;
   }
 
-  /** Campos cambiados: en una modificación, valor anterior → nuevo; en una creación, solo el nuevo. */
+  /** Changed fields: in an update, previous value → new; in a creation, only the new one. */
   protected changes(a: AuditLogDto): { key: string; old?: string; new: string }[] {
     const parse = (s: string | null) => (s ? (JSON.parse(s) as Record<string, unknown>) : {});
     const oldV = parse(a.oldValues);

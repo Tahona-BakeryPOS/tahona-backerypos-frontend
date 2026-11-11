@@ -11,8 +11,8 @@ import { SessionStore } from '../../../core/auth/session.store';
 import { ToastService } from '../../../shared/toast.service';
 
 /**
- * Venta en curso: líneas, cliente, totales (vista previa) y botón Cobrar. Orquesta los diálogos de descuento,
- * cobro y comprobante; el total que se cobra lo calcula el servidor.
+ * Sale in progress: lines, customer, totals (preview) and the Charge button. It orchestrates the discount,
+ * payment and receipt dialogs; the total that is charged is computed by the server.
  */
 @Component({
   selector: 'app-ticket',
@@ -85,9 +85,9 @@ export class TicketComponent {
   protected readonly paying = signal(false);
   protected readonly receipt = signal<SaleDto | null>(null);
 
-  /** HU-6.2: el servidor exige ventas.descuento a quien vende (la autorización por otro usuario queda pendiente, I-25). */
+  /** US-6.2: the server requires sales.discount from the seller (authorization by another user is pending, I-25). */
   protected askDiscount(l: CartLine): void {
-    if (this.session.can(Perm.ventasDescuento)) this.discounting.set(l);
+    if (this.session.can(Perm.salesDiscount)) this.discounting.set(l);
     else this.toast.show('Tu rol no puede aplicar descuentos (permiso ventas.descuento).');
   }
 

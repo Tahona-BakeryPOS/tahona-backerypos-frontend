@@ -11,7 +11,7 @@ import { DeviceConfigStore } from '../../core/device/device-config.store';
 import { CopPipe } from '../../shared/cop.pipe';
 import { ToastService } from '../../shared/toast.service';
 
-/** HU-5.2: abrir la caja declarando el efectivo inicial, o retomar la sesión que ya está abierta en ella. */
+/** US-5.2: open the register declaring the opening cash, or resume the session that is already open on it. */
 @Component({
   selector: 'app-open-shift-page',
   imports: [FormsModule, CopPipe, DatePipe],
@@ -58,17 +58,17 @@ export class OpenShiftPage {
   private readonly router = inject(Router);
 
   protected readonly presets = [50000, 100000, 200000];
-  protected readonly canOpen = this.session.can(Perm.turnosAbrir);
+  protected readonly canOpen = this.session.can(Perm.shiftsOpen);
   protected opening = 100000;
   protected readonly newKey = newIdempotencyKey;
-  /** Reintentar tras una caída de red reusa la clave: no abre dos sesiones. */
+  /** Retrying after a network drop reuses the key: it does not open two sessions. */
   protected key = newIdempotencyKey();
   protected readonly existing = signal<OpenShift | null>(null);
   protected readonly error = signal('');
   protected readonly busy = signal(false);
 
   constructor() {
-    // Si el servidor ya tiene un turno abierto en esta caja, se ofrece retomarlo.
+    // If the server already has an open shift on this register, resuming it is offered.
     if (this.canOpen) void this.shifts.resume().then((s) => this.existing.set(s)).catch(() => undefined);
   }
 

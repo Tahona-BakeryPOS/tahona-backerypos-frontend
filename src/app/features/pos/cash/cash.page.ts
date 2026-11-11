@@ -8,7 +8,7 @@ const KIND: Record<string, string> = {
   opening: 'apertura', sale_cash: 'venta', change_given: 'cambio', refund_cash: 'reembolso', income: 'ingreso', expense: 'retiro',
 };
 
-/** HU-5.3: resumen del cajón (calculado por el servidor) e ingresos/retiros de efectivo. */
+/** US-5.3: drawer summary (computed by the server) and cash income/withdrawals. */
 @Component({
   selector: 'app-cash-page',
   imports: [CopPipe, DatePipe, CashMovementDialog],

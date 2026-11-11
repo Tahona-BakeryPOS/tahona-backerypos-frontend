@@ -14,9 +14,9 @@ export interface OpenShift {
 }
 
 /**
- * Sesión de caja (turno) abierta en la caja de este equipo (HU-5.2). Se recuerda localmente para no
- * pedirla en cada pantalla; la fuente de verdad es el servidor (GET /cajas/{id}/sesion-abierta), que
- * permite el relevo de cajeros: quien entra retoma la sesión que ya está abierta.
+ * Cash session (shift) open at this device's register (US-5.2). It is remembered locally so as not to
+ * ask for it on every screen; the source of truth is the server (GET /cajas/{id}/sesion-abierta), which
+ * allows cashier handover: whoever signs in resumes the session that is already open.
  */
 @Injectable({ providedIn: 'root' })
 export class ShiftStore {
@@ -32,7 +32,7 @@ export class ShiftStore {
     return this.adopt(await this.api.openSession(this.registerId(), openingAmount, idempotencyKey));
   }
 
-  /** Adopta la sesión que el servidor tiene abierta en esta caja; null si no hay. */
+  /** Adopts the session the server has open at this register; null if there is none. */
   async resume(): Promise<OpenShift | null> {
     try {
       return this.adopt(await this.api.openSessionOf(this.registerId()));
@@ -42,14 +42,14 @@ export class ShiftStore {
     }
   }
 
-  /** Cierra con el efectivo contado; 422 PAGO_PENDIENTE si quedan pagos sin resolver (D-12). */
+  /** Closes with the counted cash; 422 PAGO_PENDIENTE if unresolved payments remain (D-12). */
   async close(countedCash: number, notes: string | null, idempotencyKey: string): Promise<CashSessionDto> {
     const closed = await this.api.closeSession(this._shift()!.id, countedCash, notes, idempotencyKey);
     this.forget();
     return closed;
   }
 
-  /** Olvida la sesión local (sin tocar el servidor), p. ej. al reasignar el equipo a otra caja. */
+  /** Forgets the local session (without touching the server), e.g. when reassigning the device to another register. */
   forget(): void {
     this.set(null);
   }

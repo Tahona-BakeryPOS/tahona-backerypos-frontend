@@ -14,8 +14,8 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
 const PAGE_SIZE = 50;
 
 /**
- * Productos e inventario → Existencias (HU-4.2, HU-4.6): saldo de cada producto que controla
- * existencias por ubicación de la sucursal, ubicaciones y reconciliación (saldo = Σ movimientos).
+ * Productos e inventario → Stock (US-4.2, US-4.6): balance of each product that tracks
+ * stock per location of the branch, locations and reconciliation (balance = Σ movements).
  */
 @Component({
   selector: 'app-stock-page',
@@ -104,7 +104,7 @@ const PAGE_SIZE = 50;
 export class StockPage {
   private readonly bo = inject(BackofficeApi);
   private readonly toast = inject(ToastService);
-  protected readonly canAdjust = inject(SessionStore).can(Perm.inventarioAjustar);
+  protected readonly canAdjust = inject(SessionStore).can(Perm.inventoryAdjust);
   protected readonly action = new AsyncAction(this.toast);
   protected readonly locationAction = new AsyncAction(this.toast);
   protected readonly pageSize = PAGE_SIZE;
@@ -133,7 +133,7 @@ export class StockPage {
   private locationKey = newIdempotencyKey();
 
   constructor() {
-    // Primera sucursal activa por defecto.
+    // First active branch by default.
     effect(() => {
       const first = this.activeBranches()[0];
       if (first && !this.branchId()) this.branchId.set(first.id);

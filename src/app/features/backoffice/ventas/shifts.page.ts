@@ -8,8 +8,8 @@ import { DateRangeComponent, daysAgo } from '../../../shared/date-range.componen
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 /**
- * Ventas y caja → Turnos y Cierres (HU-5.4). La misma vista con dos modos (dato de la ruta):
- * "turnos" muestra todas las sesiones; "cierres" solo las cerradas, con esperado, contado y diferencia.
+ * Ventas y caja → Shifts and Closings (US-5.4). The same view with two modes (route data):
+ * "turnos" shows all sessions; "cierres" only the closed ones, with expected, counted and difference.
  */
 @Component({
   selector: 'app-shifts-page',
@@ -65,7 +65,7 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
 })
 export class ShiftsPage {
   private readonly bo = inject(BackofficeApi);
-  /** Dato de la ruta (withComponentInputBinding): 'cierres' muestra solo sesiones cerradas. */
+  /** Route data (withComponentInputBinding): 'cierres' shows only closed sessions. */
   readonly mode = input<'turnos' | 'cierres'>('turnos');
   protected readonly closedOnly = computed(() => this.mode() === 'cierres');
   protected readonly from = signal(daysAgo(6));

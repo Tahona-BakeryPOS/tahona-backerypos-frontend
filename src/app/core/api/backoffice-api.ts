@@ -17,9 +17,9 @@ export interface DateRange {
 }
 
 /**
- * Gateway del backoffice. API v2: plataforma, empresa, sucursales, cajas, dispositivos, usuarios y
- * roles (fase 2); catálogo, precios y auditoría (fase 3); inventario (fase 4); sesiones de caja (fase 5); medios de pago, Bold y pagos (fase 6); facturación con Siigo (fase 7). Los PUT envían la versión leída en If-Match;
- * los POST [Idempotent] llevan Idempotency-Key. El resto (ventas, informes) es de la v1 y se adapta en su fase.
+ * Backoffice gateway. API: platform, company, branches, registers, devices, users and
+ * roles (phase 2); catalog, prices and audit (phase 3); inventory (phase 4); cash sessions (phase 5); payment methods, Bold and payments (phase 6); invoicing with Siigo (phase 7). PUTs send the version read in If-Match;
+ * [Idempotent] POSTs carry Idempotency-Key. The rest (sales, reports) comes from the previous system and is adapted in its phase.
  */
 @Injectable({ providedIn: 'root' })
 export class BackofficeApi {
@@ -30,7 +30,7 @@ export class BackofficeApi {
     return this.api.get('/plataforma/empresas');
   }
 
-  /** Sin Idempotency-Key a propósito (I-14): la respuesta trae la contraseña de un solo uso. */
+  /** No Idempotency-Key on purpose (I-14): the response carries the one-time password. */
   createCompany(body: CreateCompanyRequest): Promise<CreatedCompanyDto> {
     return this.api.post('/plataforma/empresas', body);
   }
@@ -85,7 +85,7 @@ export class BackofficeApi {
     return this.api.get('/usuarios');
   }
 
-  /** Sin Idempotency-Key a propósito (I-14): la respuesta puede traer la contraseña de un solo uso. */
+  /** No Idempotency-Key on purpose (I-14): the response may carry the one-time password. */
   createUser(body: CreateUserRequest): Promise<CreatedUserDto> {
     return this.api.post('/usuarios', body);
   }
@@ -98,7 +98,7 @@ export class BackofficeApi {
     return this.api.post(`/usuarios/${userId}/asignaciones`, body, { idempotencyKey });
   }
 
-  /** Cierra la vigencia de la asignación; no la borra. */
+  /** Closes the assignment's validity; it does not delete it. */
   endAssignment(userId: string, assignmentId: string): Promise<void> {
     return this.api.delete(`/usuarios/${userId}/asignaciones/${assignmentId}`);
   }
@@ -107,7 +107,7 @@ export class BackofficeApi {
     return this.api.get('/roles');
   }
 
-  // Catálogo (fase 3)
+  // Catalog (phase 3)
   categories(): Promise<CategoryDto[]> {
     return this.api.get('/categorias');
   }
@@ -228,12 +228,12 @@ export class BackofficeApi {
     });
   }
 
-  /** Días de Colombia (yyyy-MM-dd), inclusive. */
+  /** Colombian days (yyyy-MM-dd), inclusive. */
   salesReport(range: DateRange): Promise<SalesReportDto> {
     return this.api.get('/informes/ventas', { desde: range.from, hasta: range.to, sucursalId: range.branchId });
   }
 
-  /** Sesiones de caja abiertas en el rango (días completos en hora local). */
+  /** Cash sessions open in the range (whole days in local time). */
   cashSessions(range: DateRange, status: 'open' | 'closed' | null): Promise<CashSessionDto[]> {
     return this.api.get('/sesiones-caja', {
       desde: new Date(`${range.from}T00:00:00`).toISOString(), hasta: new Date(`${range.to}T23:59:59.999`).toISOString(),
@@ -259,7 +259,7 @@ export class BackofficeApi {
     return this.api.get('/integraciones/pasarela');
   }
 
-  /** Llaves null = conservar las guardadas. Nunca se devuelven. */
+  /** Null keys = keep the stored ones. They are never returned. */
   saveGatewayAccount(body: { environment: 'sandbox' | 'production'; identityKey: string | null; secretKey: string | null; sellerEmail: string; activate: boolean }): Promise<GatewayAccountDto> {
     return this.api.put('/integraciones/pasarela', body);
   }
@@ -298,12 +298,12 @@ export class BackofficeApi {
     return this.api.post(`/pagos/${id}/resolver`, body);
   }
 
-  // Facturación electrónica con Siigo (fase 7)
+  // Electronic invoicing with Siigo (phase 7)
   fiscalSettings(): Promise<FiscalSettingsDto> {
     return this.api.get('/facturacion/configuracion');
   }
 
-  /** Usuario y llave null = conservar los guardados. Nunca se devuelven. */
+  /** A null user and key = keep the stored ones. They are never returned. */
   saveFiscalSettings(body: {
     username: string | null; accessKey: string | null; invoiceDocumentTypeId: number | null; creditNoteDocumentTypeId: number | null;
     sellerId: number | null; productAccountGroupId: number | null; consumerFinalIdentification: string; retentionYears: number; activate: boolean;
@@ -345,7 +345,7 @@ export class BackofficeApi {
     return this.api.post(`/documentos-fiscales/${id}/reintentar`);
   }
 
-  // Auditoría (fase 3)
+  // Audit (phase 3)
   auditLog(q: { entity?: string | null; from?: string | null; to?: string | null; page: number; pageSize?: number }): Promise<PagedResult<AuditLogDto>> {
     return this.api.get('/auditoria', { entidad: q.entity, desde: q.from, hasta: q.to, page: q.page, pageSize: q.pageSize ?? 50 });
   }

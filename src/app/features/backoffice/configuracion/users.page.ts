@@ -10,16 +10,16 @@ import { ToastService } from '../../../shared/toast.service';
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 const PIN = /^\d{4,6}$/;
-/** Valor del selector para "todas las sucursales" (la API recibe branchId null). */
+/** Selector value for "all branches" (the API receives branchId null). */
 const ALL = '*';
 
 const emailOrPin = (g: AbstractControl): ValidationErrors | null =>
   g.get('email')!.value.trim() || g.get('pin')!.value ? null : { emailOrPin: true };
 
 /**
- * Configuración → Usuarios (HU-2.1). Un usuario entra a la caja con PIN, al backoffice con correo, o
- * ambos; sus roles se asignan por sucursal (o para todas). Con correo nuevo, la API devuelve una
- * contraseña de un solo uso que se muestra una sola vez. Editar envía la versión leída (If-Match).
+ * Configuración → Users (US-2.1). A user signs in to the register with a PIN, to the backoffice with an email, or
+ * both; their roles are assigned per branch (or for all). With a new email, the API returns a
+ * one-time password that is shown only once. Editing sends the version read (If-Match).
  */
 @Component({
   selector: 'app-users-page',
@@ -131,7 +131,7 @@ export class UsersPage {
   protected readonly creating = signal(false);
   protected readonly temporary = signal<{ name: string; email: string; password: string } | null>(null);
   protected readonly managingId = signal<string | null>(null);
-  /** Se toma de la lista recargada: así la versión (If-Match) y los roles siempre son los últimos. */
+  /** Taken from the reloaded list: this way the version (If-Match) and roles are always the latest. */
   protected readonly managed = computed(() => (this.users.value() ?? []).find((u) => u.id === this.managingId()) ?? null);
 
   protected readonly createForm = this.fb.group(

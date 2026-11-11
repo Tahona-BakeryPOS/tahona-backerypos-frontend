@@ -1,67 +1,72 @@
-# Tahona.BakeryPOS v2 — Frontend
+# Tahona.BakeryPOS — Frontend
 
-PWA (Angular 22, standalone, signals, OnPush) del POS SaaS para panaderías en Colombia: **POS de caja** (tablet/PC) y **backoffice**.
-Este repo es **solo el frontend**; la API y el diseño del sistema viven en el repo del backend
-(`tahona-backerypos-backend`). Cada repo tiene su CI/CD y su documentación.
+PWA (Angular 22, standalone, signals, OnPush) for a bakery POS SaaS in Colombia: the **cashier POS** (tablet/PC) and the **backoffice**.
+This repo is **the frontend only**; the API and the system design live in the backend repo
+(`tahona-backerypos-backend`). Each repo has its own CI/CD and documentation.
 
 Repo: <https://github.com/Tahona-BakeryPOS/tahona-backerypos-frontend>
-Backend: <https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend> (diseño en su carpeta `docs/`).
+Backend: <https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend> (design in its `docs/` folder).
 
-## Fuente de verdad del API
+## Language
 
-El contrato HTTP, los permisos y las reglas de negocio están en el backend, no aquí:
-`docs/api-contracts.md`, `docs/requirements.md`, `docs/decisions.md` y `docs/estado-casos-de-uso.md` de ese repo.
-Los DTO de `src/app/core/api/api.models.ts` espejan los de `Tahona.BakeryPOS.Application`, y los códigos de permiso de
-`src/app/core/auth/permissions.ts` salen de `Common/Security/Permissions.cs`. Si el backend cambia un contrato, se ajusta aquí.
-Este frontend no inventa endpoints ni respuestas: lo que el backend no expone se marca "Próximamente".
+Everything technical is in English: code identifiers, comments, commit messages and documentation. Text that users see in
+the screens (labels, messages, toasts) is Spanish, because the product is for Colombian bakeries; keep it as is.
 
-## Estado
+## API source of truth
 
-Pantallas sobre la API v2: ingreso al backoffice (contraseña de un solo uso, elección de empresa, refresh token),
-plataforma/empresas, sucursales y cajas, puntos de venta, usuarios y roles, vinculación del equipo y entrada con PIN;
-catálogo y precios, categorías, unidades, impuestos, auditoría; existencias, movimientos y ajustes; apertura de caja,
-Caja (ingresos/retiros) y cierre, Turnos y Cierres; Pagos, Métodos de pago e Integraciones (Bold); Facturación
-electrónica (opcional por empresa, D-17), Numeraciones y Facturas electrónicas; la venta del POS (cobro en vivo, autorización de existencias,
-comprobante con estado de la factura), Ventas del turno y Ventas; anular y devolver, Devoluciones, Informe de ventas y
-Panel de control. **Se retiró el modo sin conexión de la v1** (el service worker solo cachea la app).
+The HTTP contract, permissions and business rules live in the backend, not here:
+`docs/api-contracts.md`, `docs/requirements.md`, `docs/decisions.md` and `docs/use-case-status.md` of that repo.
+The DTOs in `src/app/core/api/api.models.ts` mirror those of `Tahona.BakeryPOS.Application`, and the permission codes in
+`src/app/core/auth/permissions.ts` come from `Common/Security/Permissions.cs`. If the backend changes a contract, adjust it here.
+This frontend does not invent endpoints or responses: what the backend does not expose is shown as "Próximamente".
 
-## Estructura
+## Status
+
+Screens on top of the API: backoffice sign-in (one-time password, company selection, refresh token),
+platform/companies, branches and cash registers, points of sale, users and roles, device pairing and PIN sign-in;
+catalog and prices, categories, units, taxes, audit; stock, movements and adjustments; opening a cash session,
+Cash (income/withdrawals) and closing, Shifts and Closings; Payments, Payment methods and Integrations (Bold); electronic
+invoicing (optional per company, D-17), Numberings and Electronic invoices; the POS sale (live payment, stock authorization,
+receipt with the invoice status), Shift sales and Sales; void and return, Returns, Sales report and Dashboard.
+**The offline mode of the previous system was removed** (the service worker only caches the app).
+
+## Structure
 
 ```
 src/app/
-  core/       api (cliente HTTP, modelos, idempotencia), auth, catalog, device, domain, sales, shift, storage
+  core/       api (HTTP client, models, idempotency), auth, catalog, device, domain, sales, shift, storage
   features/   backoffice, login, pairing, pos, shift
-  shared/     pipes, toasts y utilidades de UI
-e2e/          Playwright contra staging (ver e2e/README.md)
-docs/         documentación propia del frontend
+  shared/     pipes, toasts and UI utilities
+e2e/          Playwright against staging (see e2e/README.md)
+docs/         the frontend's own documentation
 ```
 
-## Convenciones
+## Conventions
 
-- Standalone components, signals y `ChangeDetectionStrategy.OnPush`.
-- Acceso HTTP por gateways por módulo (`core/api`); las pantallas no llaman a `HttpClient` directamente.
-- Todo POST reintentable envía `Idempotency-Key` (`newIdempotencyKey`); los `PUT` de datos maestros envían `If-Match`.
-- El estado del pago, de la venta, del inventario y de la factura se muestran por separado; un pago solo se da por
-  aprobado cuando el backend lo informa.
-- Secretos y llaves de terceros nunca viven en el frontend.
-- Pedir aprobación antes de: añadir dependencias importantes o cambiar el alcance.
+- Standalone components, signals and `ChangeDetectionStrategy.OnPush`.
+- HTTP access through per-module gateways (`core/api`); screens never call `HttpClient` directly.
+- Every retryable POST sends `Idempotency-Key` (`newIdempotencyKey`); master-data `PUT`s send `If-Match`.
+- The payment, sale, inventory and invoice states are shown separately; a payment is only considered approved when the
+  backend reports it.
+- Third-party secrets and keys never live in the frontend.
+- Ask for approval before: adding major dependencies or changing the scope.
 
-## Comandos
+## Commands
 
 ```bash
 npm ci
-npm start                      # ng serve; /api va por proxy a https://localhost:7246 (proxy.conf.json)
+npm start                      # ng serve; /api is proxied to https://localhost:7246 (proxy.conf.json)
 npm test                       # ng test
 npx ng build --configuration production
-npm run e2e                    # Playwright contra staging
+npm run e2e                    # Playwright against staging
 npm run e2e:typecheck
 ```
 
-## CI/CD y despliegue
+## CI/CD and deployment
 
-- CI: `.github/workflows/ci.yml` (tests, build de producción, typecheck de E2E, build de la imagen Docker).
-- La imagen (`Dockerfile`) compila la app y la sirve con Caddy (`Caddyfile`), que además termina HTTPS y hace de proxy de
-  `/api` hacia el API (`API_UPSTREAM`, la URL pública del backend). Así el navegador habla solo con el dominio del frontend
-  y no hace falta CORS.
-- Despliegue propio en `deploy/` (compose, `.env.deploy.example` y `scripts/deploy.sh`): un ambiente por VPS. No depende de
-  ningún archivo del repo del backend; solo necesita saber la URL de su API.
+- CI: `.github/workflows/ci.yml` (tests, production build, E2E typecheck, Docker image build).
+- The image (`Dockerfile`) builds the app and serves it with Caddy (`Caddyfile`), which also terminates HTTPS and proxies
+  `/api` to the API (`API_UPSTREAM`, the backend's public URL). The browser only talks to the frontend's domain,
+  so CORS is not needed.
+- Its own deployment in `deploy/` (compose, `.env.deploy.example` and `scripts/deploy.sh`): one environment per VPS. It does not depend on
+  any file of the backend repo; it only needs to know its API's URL.

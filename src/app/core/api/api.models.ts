@@ -1,12 +1,12 @@
 /**
- * Contratos de la API (espejo de los DTO de BakeryPOS.Application).
- * La API serializa en camelCase; el dinero viaja como número decimal.
- * Lo marcado "fase 2" ya sigue el backend v2; el resto es de la v1 y cada fase lo adapta.
+ * API contracts (a mirror of the DTOs of Tahona.BakeryPOS.Application).
+ * The API serializes in camelCase; money travels as a decimal number.
+ * What is marked "phase 2" already follows the backend API; the rest comes from the previous system and each phase adapts it.
  */
 
 // ---- Sesiones (fase 2) ----
 
-/** POST /auth/login-pin (encabezado X-Device-Token del equipo vinculado). */
+/** POST /auth/login-pin (X-Device-Token header of the paired device). */
 export interface LoginPinRequest {
   userId: string;
   pin: string;
@@ -23,15 +23,15 @@ export interface CompanySummary {
   name: string;
 }
 
-/** Respuesta de login, select-company, refresh, cambiar-contrasena y login-pin. */
+/** Response of login, select-company, refresh, cambiar-contrasena and login-pin. */
 export interface AuthSessionDto {
   accessToken: string;
   expiresAt: string;
-  /** Solo backoffice; la sesión de caja se renueva con el PIN. */
+  /** Backoffice only; the cash-register session is renewed with the PIN. */
   refreshToken: string | null;
   userId: string;
   fullName: string;
-  /** null = aún debe elegir empresa (varias empresas o administrador de plataforma). */
+  /** null = it still has to choose a company (several companies or platform administrator). */
   companyId: string | null;
   permissions: string[];
   mustChangePassword: boolean;
@@ -63,7 +63,7 @@ export interface SalesReportDto {
   topProducts: { productId: string; name: string; quantity: number; total: number }[];
 }
 
-/** Cuerpo de error de ResultExtensions.ToErrorResult. */
+/** Error body of ResultExtensions.ToErrorResult. */
 export interface ApiErrorBody {
   codigo?: string;
   mensaje?: string;
@@ -71,8 +71,8 @@ export interface ApiErrorBody {
 }
 
 /**
- * Medios de pago y motivos de caja del equipo (v1). La v2 aún no tiene endpoint que los entregue:
- * llegan con las fases 3 (catálogo), 5 (cajas y turnos) y 6 (pagos).
+ * Payment methods and cash reasons of the device (previous system). The API does not yet have an endpoint that delivers them:
+ * they arrive with phases 3 (catalog), 5 (registers and shifts) and 6 (payments).
  */
 export interface DeviceSetupDto {
   branchId: string;
@@ -85,7 +85,7 @@ export interface DeviceSetupDto {
 
 // ---- Dispositivo vinculado (fase 2) ----
 
-/** POST /dispositivo/vincular. El token solo se entrega en esta respuesta. */
+/** POST /dispositivo/vincular. The token is only delivered in this response. */
 export interface PairedDeviceDto {
   deviceId: string;
   deviceToken: string;
@@ -95,7 +95,7 @@ export interface PairedDeviceDto {
   cashRegisterName: string;
 }
 
-/** GET /dispositivo/usuarios: quién tiene PIN y rol vigente en la sucursal de la caja. */
+/** GET /dispositivo/usuarios: who has a PIN and a current role at the register's branch. */
 export interface DeviceUserDto {
   userId: string;
   fullName: string;
@@ -103,7 +103,7 @@ export interface DeviceUserDto {
 
 // ---- Backoffice (fase 2) ----
 
-/** Datos maestros con ETag: `version` es el valor para If-Match. */
+/** Master data with ETag: `version` is the value for If-Match. */
 export interface Versioned {
   version: string;
 }
@@ -171,7 +171,7 @@ export interface DeviceDto {
   createdAt: string;
 }
 
-/** POST /cajas/{id}/codigos-vinculacion: 8 caracteres, un solo uso, 15 minutos. */
+/** POST /cajas/{id}/codigos-vinculacion: 8 characters, single use, 15 minutes. */
 export interface PairingCodeDto {
   code: string;
   expiresAt: string;
@@ -183,7 +183,7 @@ export interface AssignmentDto {
   roleId: string;
   roleCode: string;
   roleName: string;
-  /** null = todas las sucursales. */
+  /** null = all branches. */
   branchId: string | null;
   validFrom: string;
   validTo: string | null;
@@ -208,7 +208,7 @@ export interface AssignmentInput {
   validTo?: string | null;
 }
 
-/** POST /usuarios: con correo, el usuario puede entrar al backoffice. */
+/** POST /usuarios: with an email, the user can sign in to the backoffice. */
 export interface CreateUserRequest {
   fullName: string;
   email: string | null;
@@ -216,13 +216,13 @@ export interface CreateUserRequest {
   assignments: AssignmentInput[];
 }
 
-/** La contraseña de un solo uso solo viene aquí y solo si el usuario es nuevo. */
+/** The one-time password only comes here and only if the user is new. */
 export interface CreatedUserDto {
   user: UserDto;
   temporaryPassword: string | null;
 }
 
-/** PUT /usuarios/{id}: `pin` null = no cambiarlo. */
+/** PUT /usuarios/{id}: `pin` null = do not change it. */
 export interface UpdateUserRequest {
   fullName: string;
   isActive: boolean;
@@ -269,7 +269,7 @@ export interface CreateCompanyRequest {
 
 export interface CreatedCompanyDto {
   company: CompanyDto;
-  /** `temporaryPassword` null = el propietario ya tenía cuenta y conserva su contraseña. */
+  /** `temporaryPassword` null = the owner already had an account and keeps their password. */
   owner: { userId: string; email: string; temporaryPassword: string | null };
 }
 
@@ -300,7 +300,7 @@ export interface SaleDetailDto {
   payments: { paymentMethodName: string; amount: number; reference: string | null }[];
 }
 
-// ---- Catálogo y precios (fase 3) ----
+// ---- Catalog and prices (phase 3) ----
 
 export interface CategoryDto extends Versioned {
   id: string;
@@ -329,11 +329,11 @@ export interface UnitDto {
   name: string;
   kind: 'count' | 'mass' | 'volume';
   dianCode: string;
-  /** Masa y volumen: la caja pide la cantidad (peso) al vender. */
+  /** Mass and volume: the register asks for the quantity (weight) when selling. */
   allowsDecimals: boolean;
 }
 
-/** GET /productos?sucursalId=: precio que rige y disponibilidad en esa sucursal. */
+/** GET /productos?sucursalId=: the price in force and availability at that branch. */
 export interface ProductDto extends Versioned {
   id: string;
   sku: string;
@@ -348,14 +348,14 @@ export interface ProductDto extends Versioned {
   taxRate: number;
   barcode: string | null;
   trackStock: boolean;
-  /** D-06: allow = permitir negativo; block = bloquear salvo autorización. */
+  /** D-06: allow = allow negative; block = block unless authorized. */
   negativeStockPolicy: NegativeStockPolicy;
   isActive: boolean;
   basePrice: number | null;
   branchPrice: number | null;
-  /** El de la sucursal si tiene uno vigente; si no, el base. */
+  /** The branch's if it has a current one; otherwise the base one. */
   price: number | null;
-  /** D-07: los precios de lista incluyen el impuesto. */
+  /** D-07: list prices include the tax. */
   priceIncludesTax: boolean | null;
   isAvailable: boolean;
 }
@@ -380,7 +380,7 @@ export interface CreateProductRequest {
   barcode: string | null;
   trackStock: boolean;
   negativeStockPolicy: NegativeStockPolicy;
-  /** Primer precio base, vigente desde ya (con impuesto incluido). */
+  /** First base price, in force from now (with tax included). */
   basePrice: number | null;
 }
 
@@ -400,21 +400,21 @@ export interface SetPriceRequest {
   branchId: string | null;
   amount: number;
   includesTax: boolean;
-  /** null = desde ahora. */
+  /** null = from now. */
   validFrom: string | null;
 }
 
-// ---- Auditoría (fase 3) ----
+// ---- Audit (phase 3) ----
 
 export interface AuditLogDto {
   id: string;
   occurredAt: string;
   userId: string | null;
   userName: string | null;
-  /** Tabla con esquema, p. ej. cat.products. */
+  /** Table with schema, e.g. cat.products. */
   entity: string;
   entityId: string;
-  /** creacion | modificacion | eliminacion */
+  /** create | update | delete */
   action: string;
   oldValues: string | null;
   newValues: string | null;
@@ -439,7 +439,7 @@ export interface AdjustmentReasonDto {
   isActive: boolean;
 }
 
-/** GET /existencias: cada producto que controla existencias por ubicación (0 si no tiene movimientos). */
+/** GET /existencias: each product that tracks stock per location (0 if it has no movements). */
 export interface StockRowDto {
   locationId: string;
   locationName: string;
@@ -463,7 +463,7 @@ export interface StockMovementDto {
   sku: string;
   productName: string;
   unitCode: string;
-  /** Con signo: positivo entra, negativo sale. */
+  /** Signed: positive goes in, negative goes out. */
   quantity: number;
   kind: StockMovementKind;
   reasonName: string | null;
@@ -517,7 +517,7 @@ export interface CashMovementDto {
   occurredAt: string;
   kind: CashMovementKind;
   amount: number;
-  /** Con signo para el esperado. */
+  /** Signed, for the expected amount. */
   signedAmount: number;
   reasonName: string | null;
   userName: string | null;
@@ -525,7 +525,7 @@ export interface CashMovementDto {
   note: string | null;
 }
 
-/** GET /sesiones-caja/{id}/resumen: desglose del esperado y pagos que bloquean el cierre (D-12). */
+/** GET /sesiones-caja/{id}/resumen: breakdown of the expected amount and payments that block the close (D-12). */
 export interface CashSessionSummaryDto {
   sessionId: string;
   openingAmount: number;
@@ -554,14 +554,14 @@ export interface PaymentMethodDto extends Versioned {
   code: string;
   name: string;
   kind: PaymentMethodKind;
-  /** Con gateway: POS (tarjeta), NEQUI o PAY_BY_QR_BOLD. */
+  /** With gateway: POS (card), NEQUI or PAY_BY_QR_BOLD. */
   gatewayMethod: string | null;
   requiresReference: boolean;
   displayOrder: number;
   isActive: boolean;
 }
 
-/** Estado de la integración por ambiente; nunca trae las llaves. */
+/** Status of the integration per environment; it never brings the keys. */
 export interface GatewayAccountDto {
   provider: string;
   environment: 'sandbox' | 'production';
@@ -599,7 +599,7 @@ export interface PaymentDto {
   paymentMethodName: string;
   amount: number;
   status: 'pending' | 'approved' | 'declined' | 'cancelled' | 'refunded' | 'partially_refunded';
-  /** Estado del último intento en Bold: pending, unknown, error… */
+  /** Status of the last attempt at Bold: pending, unknown, error… */
   attemptStatus: string | null;
   attemptError: string | null;
   reference: string | null;
@@ -609,9 +609,9 @@ export interface PaymentDto {
   resolvedAt: string | null;
 }
 
-// ---- Facturación electrónica con Siigo (fase 7) ----
+// ---- Electronic invoicing with Siigo (phase 7) ----
 
-/** Nunca trae el usuario ni la llave de acceso. */
+/** It never brings the user or the access key. */
 export interface FiscalSettingsDto {
   provider: string;
   hasCredentials: boolean;
@@ -677,7 +677,7 @@ export interface FiscalAttemptDto {
 
 // ---- Ventas (fase 8) ----
 
-/** Producto listo para vender en la caja: precio que rige en la sucursal (con impuesto, D-07). */
+/** Product ready to sell at the register: the price in force at the branch (with tax, D-07). */
 export interface PosProduct {
   id: string;
   sku: string;
@@ -752,7 +752,7 @@ export interface SaleDto {
   discountTotal: number;
   taxTotal: number;
   total: number;
-  /** Lo que falta por pagar con pagos aprobados. */
+  /** What is still left to pay with approved payments. */
   remaining: number;
   change: number;
   stockAuthorized: boolean;
@@ -761,12 +761,12 @@ export interface SaleDto {
   lines: SaleLineDto[];
   payments: SalePaymentInfo[];
   fiscal: FiscalDocumentSummary | null;
-  /** Devuelto al cliente por anulación o devoluciones. */
+  /** Returned to the customer through a void or returns. */
   refundedTotal: number;
   voidedAt: string | null;
   voidReason: string | null;
   voidedByName: string | null;
-  /** Cantidad ya devuelta por id de línea. */
+  /** Quantity already returned by line id. */
   returnedQuantities: Record<string, number>;
   returns: SaleReturnDto[];
   creditNotes: CreditNoteSummary[];
@@ -781,7 +781,7 @@ export interface SaleReturnDto {
   lines: { saleLineId: string; description: string; quantity: number; amount: number; restock: boolean }[];
 }
 
-/** reason: 1 devolución, 2 anulación. status como FiscalDocumentSummary. */
+/** reason: 1 return, 2 void. status as in FiscalDocumentSummary. */
 export interface CreditNoteSummary {
   id: string;
   saleId: string;

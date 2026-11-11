@@ -19,8 +19,8 @@ const FISCAL: Record<string, string> = {
 };
 
 /**
- * Ventas de la sesión de caja abierta, con su estado de pago y de factura. Una venta del turno se anula (D-11); una de
- * cualquier turno se devuelve total o parcialmente (se busca por número).
+ * Sales of the open cash session, with their payment and invoice status. A sale of the shift is voided (D-11); one from
+ * any shift is returned fully or partially (it is looked up by number).
  */
 @Component({
   selector: 'app-shift-sales-page',
@@ -103,7 +103,7 @@ export class ShiftSalesPage {
     }
   }
 
-  /** Devolución de una venta de otro turno (D-11: ya no se anula). */
+  /** Return of a sale from another shift (D-11: it can no longer be voided). */
   protected async find(): Promise<void> {
     if (!this.lookup) return;
     this.error.set('');

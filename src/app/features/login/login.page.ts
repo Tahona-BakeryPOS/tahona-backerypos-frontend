@@ -12,9 +12,9 @@ import { KeypadComponent, KeypadKey } from '../../shared/keypad.component';
 const MAX_PIN = 6;
 
 /**
- * Entrada a caja (HU-2.4): la persona toca su nombre y digita su PIN. La lista viene del servidor
- * (usuarios con PIN y rol vigente en la sucursal de este equipo, encabezado X-Device-Token) y se
- * guarda para mostrarla aunque se caiga la red. 5 PIN fallidos bloquean 5 minutos (423).
+ * Register sign-in (US-2.4): the person taps their name and enters their PIN. The list comes from the server
+ * (users with a PIN and a current role at this device's branch, X-Device-Token header) and is
+ * stored to show it even if the network drops. 5 failed PINs lock for 5 minutes (423).
  */
 @Component({
   selector: 'app-login-page',
@@ -137,11 +137,11 @@ export class LoginPage {
     try {
       const r = await this.api.loginPin({ userId: this.selected()!.userId, pin: this.pin() }, this.device.deviceToken()!);
       this.session.start(r, 'pos');
-      // Turnos y venta siguen en la API v1: se adaptan en las fases 5 y 8.
+      // Shifts and sales are still on the previous API: they are adapted in phases 5 and 8.
       void this.router.navigate([this.shifts.isOpen() ? '/pos' : '/turno']);
     } catch (e) {
       const err = toApiError(e);
-      // 423 USUARIO_BLOQUEADO trae su propio mensaje con la espera.
+      // 423 USUARIO_BLOQUEADO brings its own message with the wait.
       if (err.status === 401) this.error.set('PIN incorrecto.');
       else this.handleDeviceError(e);
     } finally {
@@ -150,7 +150,7 @@ export class LoginPage {
     }
   }
 
-  /** Un equipo desvinculado (o su caja desactivada) vuelve a la pantalla de vinculación. */
+  /** An unpaired device (or one whose register was deactivated) goes back to the pairing screen. */
   private handleDeviceError(e: unknown): void {
     const err = toApiError(e);
     if (err.code === 'DISPOSITIVO_NO_VINCULADO') {

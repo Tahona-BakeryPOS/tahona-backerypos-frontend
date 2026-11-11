@@ -4,8 +4,8 @@ import { PosApi } from '../api/pos-api';
 import { DeviceConfigStore } from '../device/device-config.store';
 
 /**
- * Catálogo de la caja: productos que se pueden vender en la sucursal del equipo, con su precio vigente.
- * Vive en memoria (la v2 no vende sin conexión) y se recarga al abrir la venta o a pedido.
+ * The register's catalog: products that can be sold at the device's branch, with their current price.
+ * It lives in memory (the system does not sell offline) and reloads when opening the sale or on demand.
  */
 @Injectable({ providedIn: 'root' })
 export class CatalogStore {

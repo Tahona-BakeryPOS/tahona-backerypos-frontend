@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, model } from '@angular/core';
 
-/** Fecha local en formato yyyy-MM-dd (lo que esperan los filtros de la API). */
+/** Local date in yyyy-MM-dd format (what the API filters expect). */
 export const isoDate = (d: Date): string =>
   new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 10);
 
 export const daysAgo = (n: number): string => isoDate(new Date(Date.now() - n * 86_400_000));
 
-/** Filtro de rango de fechas con atajos (Hoy, 7 días, 30 días). */
+/** Date-range filter with shortcuts (Today, 7 days, 30 days). */
 @Component({
   selector: 'app-date-range',
   changeDetection: ChangeDetectionStrategy.OnPush,

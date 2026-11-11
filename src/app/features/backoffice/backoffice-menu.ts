@@ -4,9 +4,9 @@ export type MenuIcon = 'panel' | 'store' | 'box' | 'chef' | 'truck' | 'register'
 
 export interface MenuItem {
   label: string;
-  /** Ruta bajo /backoffice. Sin ruta = aún no existe contra la API v2 ("Próximamente"). */
+  /** Route under /backoffice. No route = it does not exist yet against the API ("Próximamente"). */
   route?: string;
-  /** Basta con uno de ellos. */
+  /** One of them is enough. */
   perm?: Permission | Permission[];
 }
 
@@ -19,42 +19,42 @@ export interface MenuGroup {
 const soon = (...labels: string[]): MenuItem[] => labels.map((label) => ({ label }));
 
 /**
- * Navegación del backoffice. Solo llevan ruta las pantallas que ya funcionan contra la API v2
- * (fase 2: plataforma, empresa, sucursales y cajas, puntos de venta, usuarios y roles; fase 3:
- * catálogo, categorías, unidades, impuestos y auditoría; fase 4: existencias, movimientos y ajustes; fase 5: turnos y cierres; fase 6: pagos, métodos de pago e integraciones; fase 7: facturación electrónica, facturas y numeraciones). Las de la v1 vuelven al menú cuando su fase
- * adapta la pantalla (backend: docs/implementation-plan.md); mientras tanto se ven como "Próximamente".
+ * Backoffice navigation. Only the screens that already work against the API have a route
+ * (phase 2: platform, company, branches and registers, points of sale, users and roles; phase 3:
+ * catalog, categories, units, taxes and audit; phase 4: stock, movements and adjustments; phase 5: shifts and closings; phase 6: payments, payment methods and integrations; phase 7: electronic invoicing, invoices and numberings). The previous system's screens come back to the menu when their phase
+ * adapts the screen (backend: docs/implementation-plan.md); in the meantime they are shown as "Próximamente".
  */
 export const BACKOFFICE_MENU: MenuGroup[] = [
   {
     label: 'Plataforma',
     icon: 'gear',
-    items: [{ label: 'Empresas', route: 'plataforma/empresas', perm: Perm.plataformaAdmin }],
+    items: [{ label: 'Empresas', route: 'plataforma/empresas', perm: Perm.platformAdmin }],
   },
   {
     label: 'Panel de control',
     icon: 'panel',
-    items: [{ label: 'Resumen del día', route: 'panel', perm: Perm.reportesVer }],
+    items: [{ label: 'Resumen del día', route: 'panel', perm: Perm.reportsView }],
   },
   {
     label: 'Mi negocio',
     icon: 'store',
     items: [
-      { label: 'Empresa', route: 'negocio/empresa', perm: Perm.organizacionGestionar },
-      { label: 'Sucursales y cajas', route: 'negocio/sucursales', perm: Perm.organizacionGestionar },
+      { label: 'Empresa', route: 'negocio/empresa', perm: Perm.organizationManage },
+      { label: 'Sucursales y cajas', route: 'negocio/sucursales', perm: Perm.organizationManage },
       ...soon('Bodegas'),
-      { label: 'Puntos de venta', route: 'negocio/puntos-venta', perm: Perm.organizacionGestionar },
+      { label: 'Puntos de venta', route: 'negocio/puntos-venta', perm: Perm.organizationManage },
     ],
   },
   {
     label: 'Productos e inventario',
     icon: 'box',
     items: [
-      { label: 'Catálogo y precios', route: 'productos/catalogo', perm: [Perm.catalogoGestionar, Perm.preciosSucursal] },
-      { label: 'Categorías', route: 'productos/categorias', perm: Perm.catalogoGestionar },
-      { label: 'Unidades', route: 'productos/unidades', perm: Perm.catalogoGestionar },
-      { label: 'Existencias', route: 'inventario/existencias', perm: Perm.inventarioVer },
-      { label: 'Movimientos', route: 'inventario/movimientos', perm: Perm.inventarioVer },
-      { label: 'Ajustes', route: 'inventario/ajustes', perm: Perm.inventarioAjustar },
+      { label: 'Catálogo y precios', route: 'productos/catalogo', perm: [Perm.catalogManage, Perm.branchPrices] },
+      { label: 'Categorías', route: 'productos/categorias', perm: Perm.catalogManage },
+      { label: 'Unidades', route: 'productos/unidades', perm: Perm.catalogManage },
+      { label: 'Existencias', route: 'inventario/existencias', perm: Perm.inventoryView },
+      { label: 'Movimientos', route: 'inventario/movimientos', perm: Perm.inventoryView },
+      { label: 'Ajustes', route: 'inventario/ajustes', perm: Perm.inventoryAdjust },
       ...soon('Transferencias'),
     ],
   },
@@ -72,36 +72,36 @@ export const BACKOFFICE_MENU: MenuGroup[] = [
     label: 'Ventas y caja',
     icon: 'register',
     items: [
-      { label: 'Ventas', route: 'ventas/ventas', perm: Perm.ventasVer },
-      { label: 'Turnos', route: 'ventas/turnos', perm: Perm.reportesVer },
+      { label: 'Ventas', route: 'ventas/ventas', perm: Perm.salesView },
+      { label: 'Turnos', route: 'ventas/turnos', perm: Perm.reportsView },
       ...soon('Arqueos'),
-      { label: 'Cierres', route: 'ventas/cierres', perm: Perm.reportesVer },
-      { label: 'Pagos', route: 'ventas/pagos', perm: Perm.reportesVer },
-      { label: 'Devoluciones', route: 'ventas/devoluciones', perm: Perm.reportesVer },
-      { label: 'Facturas electrónicas', route: 'ventas/documentos-fiscales', perm: Perm.ventasVer },
-      { label: 'Métodos de pago', route: 'ventas/medios-pago', perm: Perm.organizacionGestionar },
+      { label: 'Cierres', route: 'ventas/cierres', perm: Perm.reportsView },
+      { label: 'Pagos', route: 'ventas/pagos', perm: Perm.reportsView },
+      { label: 'Devoluciones', route: 'ventas/devoluciones', perm: Perm.reportsView },
+      { label: 'Facturas electrónicas', route: 'ventas/documentos-fiscales', perm: Perm.salesView },
+      { label: 'Métodos de pago', route: 'ventas/medios-pago', perm: Perm.organizationManage },
     ],
   },
   {
     label: 'Informes',
     icon: 'chart',
     items: [
-      { label: 'Ventas', route: 'informes/ventas', perm: Perm.reportesVer },
+      { label: 'Ventas', route: 'informes/ventas', perm: Perm.reportsView },
       ...soon('Costos', 'Márgenes', 'Inventario', 'Mermas'),
-      { label: 'Auditoría', route: 'informes/auditoria', perm: Perm.organizacionGestionar },
+      { label: 'Auditoría', route: 'informes/auditoria', perm: Perm.organizationManage },
     ],
   },
   {
     label: 'Configuración',
     icon: 'gear',
     items: [
-      { label: 'Usuarios', route: 'configuracion/usuarios', perm: Perm.organizacionGestionar },
-      { label: 'Roles', route: 'configuracion/roles', perm: Perm.organizacionGestionar },
-      { label: 'Impuestos', route: 'configuracion/impuestos', perm: Perm.catalogoGestionar },
-      { label: 'Facturación electrónica', route: 'configuracion/facturacion', perm: Perm.fiscalGestionar },
-      { label: 'Numeraciones', route: 'configuracion/numeraciones', perm: Perm.fiscalGestionar },
-      { label: 'Integraciones', route: 'configuracion/integraciones', perm: Perm.organizacionGestionar },
-      { label: 'Historial de cambios', route: 'configuracion/historial', perm: Perm.organizacionGestionar },
+      { label: 'Usuarios', route: 'configuracion/usuarios', perm: Perm.organizationManage },
+      { label: 'Roles', route: 'configuracion/roles', perm: Perm.organizationManage },
+      { label: 'Impuestos', route: 'configuracion/impuestos', perm: Perm.catalogManage },
+      { label: 'Facturación electrónica', route: 'configuracion/facturacion', perm: Perm.fiscalManage },
+      { label: 'Numeraciones', route: 'configuracion/numeraciones', perm: Perm.fiscalManage },
+      { label: 'Integraciones', route: 'configuracion/integraciones', perm: Perm.organizationManage },
+      { label: 'Historial de cambios', route: 'configuracion/historial', perm: Perm.organizationManage },
     ],
   },
 ];

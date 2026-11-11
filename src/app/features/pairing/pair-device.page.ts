@@ -7,8 +7,8 @@ import { DeviceConfigStore } from '../../core/device/device-config.store';
 import { ShiftStore } from '../../core/shift/shift.store';
 
 /**
- * Primera puesta en marcha de una caja. El propietario genera el código en
- * Backoffice → Mi negocio → Puntos de venta → Vincular dispositivo, y aquí se escribe.
+ * First start-up of a register. The owner generates the code in
+ * Backoffice → Mi negocio → Puntos de venta → Vincular dispositivo, and it is typed here.
  */
 @Component({
   selector: 'app-pair-device-page',
@@ -63,7 +63,7 @@ export class PairDevicePage {
     this.error.set('');
     try {
       const r = await this.api.pairDevice(code, this.name.trim() || 'Caja');
-      // El turno guardado de otra caja no aplica a esta.
+      // The stored shift of another register does not apply to this one.
       if (this.device.config()?.cashRegisterId !== r.cashRegisterId) this.shifts.forget();
       this.device.save(DeviceConfigStore.fromPairing(r, this.prefix));
       void this.router.navigate(['/login']);

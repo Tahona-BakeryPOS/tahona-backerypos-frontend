@@ -3,7 +3,7 @@ import { BackofficeApi } from '../../../core/api/backoffice-api';
 import { PERMISSION_LABELS } from '../../../core/auth/permissions';
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
-/** Configuración → Roles: qué puede hacer cada rol (solo lectura en el MVP). */
+/** Configuración → Roles: what each role can do (read-only in the MVP). */
 @Component({
   selector: 'app-roles-page',
   changeDetection: ChangeDetectionStrategy.OnPush,

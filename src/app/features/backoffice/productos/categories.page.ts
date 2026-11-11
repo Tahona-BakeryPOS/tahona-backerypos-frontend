@@ -8,7 +8,7 @@ import { ModalComponent } from '../../../shared/modal.component';
 import { ToastService } from '../../../shared/toast.service';
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
-/** Productos → Categorías: las pestañas que ve el cajero en la pantalla de venta, en este orden. */
+/** Productos → Categories: the tabs the cashier sees on the sale screen, in this order. */
 @Component({
   selector: 'app-categories-page',
   imports: [ReactiveFormsModule, ModalComponent],

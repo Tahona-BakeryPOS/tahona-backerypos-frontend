@@ -6,8 +6,8 @@ import { DeviceConfigStore } from '../../core/device/device-config.store';
 import { CloseShiftDialog } from './cash/close-shift.dialog';
 
 /**
- * Marco del punto de venta: barra superior y navegación (venta, ventas del turno y caja). La v2 vende en
- * línea: el modo sin conexión de la v1 se retiró en la fase 8.
+ * Point-of-sale frame: top bar and navigation (sale, shift sales and cash). It sells
+ * online: the previous system's offline mode was removed in phase 8.
  */
 @Component({
   selector: 'app-pos-shell',
@@ -52,7 +52,7 @@ export class PosShellComponent {
   protected readonly backofficePerms = BACKOFFICE_PERMS;
   protected readonly closing = signal(false);
 
-  /** Salir cierra la sesión del cajero, no la de la caja: otro cajero puede continuar. */
+  /** Signing out ends the cashier's session, not the register's: another cashier can continue. */
   protected logout(): void {
     this.session.end();
     void this.router.navigate(['/login']);

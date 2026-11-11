@@ -8,7 +8,7 @@ import { ShiftStore } from '../../core/shift/shift.store';
 import { IconComponent } from '../../shared/icon.component';
 import { BACKOFFICE_MENU } from './backoffice-menu';
 
-/** Marco del backoffice: barra lateral por módulos (colapsable en pantallas angostas). */
+/** Backoffice frame: a sidebar by module (collapsible on narrow screens). */
 @Component({
   selector: 'app-backoffice-shell',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, IconComponent],
@@ -92,8 +92,8 @@ export class BackofficeShellComponent {
   });
 
   /**
-   * Solo se muestran los ítems que el rol puede abrir. Los "Próximamente" se ven en las sesiones de
-   * empresa; la de plataforma no opera ninguna empresa y solo ve lo suyo.
+   * Only the items the role can open are shown. The "Próximamente" ones are shown in company
+   * sessions; the platform session operates no company and only sees its own.
    */
   protected readonly menu = computed(() => {
     const inCompany = !!this.session.user()?.companyId;
@@ -107,7 +107,7 @@ export class BackofficeShellComponent {
     this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => this.open.set(false));
   }
 
-  /** Revoca el refresh token en el servidor (sin esperar) y cierra la sesión local. */
+  /** Revokes the refresh token on the server (without waiting) and closes the local session. */
   protected logout(): void {
     const refresh = this.session.refreshToken();
     if (refresh) void this.api.logout(refresh).catch(() => undefined);

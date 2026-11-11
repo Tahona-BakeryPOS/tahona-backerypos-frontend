@@ -9,9 +9,9 @@ import { ToastService } from '../../../shared/toast.service';
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 /**
- * Configuración → Facturación electrónica con Siigo (D-04, D-05: factura en cada venta). El usuario y la
- * llave de acceso se guardan cifrados y no se vuelven a mostrar. Los impuestos y medios de pago se
- * emparejan con los de Siigo; los productos se crean en Siigo con su SKU al facturarlos (I-24).
+ * Configuración → Electronic invoicing with Siigo (D-04, D-17: optional per company). The user and
+ * access key are stored encrypted and are not shown again. Taxes and payment methods are
+ * paired with Siigo's; products are created in Siigo with their SKU when they are invoiced (I-24).
  */
 @Component({
   selector: 'app-invoicing-page',
@@ -137,7 +137,7 @@ export class InvoicingPage {
   protected readonly methods = resource({ loader: () => this.bo.paymentMethods() });
   protected readonly products = resource({ loader: () => this.bo.products({ pageSize: 200 }) });
   protected readonly catalogs = signal<SiigoCatalogsDto | null>(null);
-  /** "tipo:idLocal" → id en Siigo. */
+  /** "type:localId" → id in Siigo. */
   protected readonly map = signal<Record<string, string>>({});
   protected readonly testDoc = signal<FiscalDocumentDto | null>(null);
 
@@ -181,7 +181,7 @@ export class InvoicingPage {
       productAccountGroupId: v.productAccountGroupId ? Number(v.productAccountGroupId) : null,
       consumerFinalIdentification: v.consumerFinalIdentification.trim(), retentionYears: Number(v.retentionYears), activate: v.activate,
     }), 'Configuración guardada');
-    // Las credenciales escritas no se conservan en el formulario.
+    // The typed credentials are not kept in the form.
     this.form.patchValue({ username: '', accessKey: '' });
     if (saved) this.settings.reload();
   }

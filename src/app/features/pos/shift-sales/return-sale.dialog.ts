@@ -14,8 +14,8 @@ import { OwnerAuthComponent } from '../../../shared/owner-auth.component';
 interface ReturnRow { id: string; description: string; available: number; lineTotal: number; quantity: number; unitQty: number; restock: boolean }
 
 /**
- * HU-9.2: devolución total o parcial. El dinero sale en efectivo de esta caja (D-11) aunque la venta se haya pagado con
- * datáfono; por línea se decide si el producto vuelve al inventario. La autoriza un superior con su PIN.
+ * US-9.2: full or partial return. The money comes out in cash from this register (D-11) even if the sale was paid by
+ * card terminal; per line it is decided whether the product goes back into inventory. A supervisor authorizes it with their PIN.
  */
 @Component({
   selector: 'app-return-sale-dialog',
@@ -65,14 +65,14 @@ export class ReturnSaleDialog {
   readonly closed = output<void>();
   readonly returned = output<SaleDto>();
 
-  protected readonly perm = Perm.devolucionesAprobar;
-  protected readonly needsAuthorizer = computed(() => !this.session.can(Perm.devolucionesAprobar));
+  protected readonly perm = Perm.returnsApprove;
+  protected readonly needsAuthorizer = computed(() => !this.session.can(Perm.returnsApprove));
   protected readonly rows = signal<ReturnRow[]>([]);
   private readonly version = signal(0);
   protected reason = '';
   protected readonly error = signal('');
   protected readonly busy = signal(false);
-  /** Una clave por intento: si cambian los datos, es otra devolución. */
+  /** One key per attempt: if the data changes, it is another return. */
   private key = newIdempotencyKey();
 
   protected readonly estimate = computed(() => {

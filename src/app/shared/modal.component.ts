@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
-/** Diálogo modal con fondo; el contenido se proyecta. Escape o clic en el fondo lo cierran. */
+/** Modal dialog with a backdrop; the content is projected. Escape or a click on the backdrop closes it. */
 @Component({
   selector: 'app-modal',
   changeDetection: ChangeDetectionStrategy.OnPush,

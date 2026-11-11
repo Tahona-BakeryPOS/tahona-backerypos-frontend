@@ -6,8 +6,8 @@ import { BACKOFFICE_PERMS, Perm, Permission } from './permissions';
 import { SessionStore } from './session.store';
 
 /**
- * Guards de la caja, en el orden del flujo: vincular dispositivo → PIN → abrir turno → vender.
- * El backoffice no depende de la caja: entra con correo y contraseña desde cualquier equipo.
+ * Register guards, in the flow's order: pair device → PIN → open shift → sell.
+ * The backoffice does not depend on the register: it signs in with email and password from any device.
  */
 export const devicePairedGuard: CanActivateFn = () =>
   inject(DeviceConfigStore).isPaired() || inject(Router).createUrlTree(['/vincular']);
@@ -18,18 +18,18 @@ export const authGuard: CanActivateFn = () =>
 export const shiftOpenGuard: CanActivateFn = () =>
   inject(ShiftStore).isOpen() || inject(Router).createUrlTree(['/turno']);
 
-/** Si ya hay turno abierto, no tiene sentido mostrar "Abrir turno". */
+/** If a shift is already open, it makes no sense to show "Abrir turno". */
 export const noShiftGuard: CanActivateFn = () =>
   !inject(ShiftStore).isOpen() || inject(Router).createUrlTree(['/pos']);
 
 /**
- * Backoffice: sesión de backoffice ya lista (contraseña cambiada y empresa elegida, o sesión de
- * plataforma). Si falta un paso, vuelve al ingreso, que retoma donde quedó.
+ * Backoffice: a backoffice session already ready (password changed and company chosen, or a
+ * platform session). If a step is missing, it goes back to sign-in, which resumes where it left off.
  */
 export const backofficeGuard: CanActivateFn = () => {
   const s = inject(SessionStore);
   const u = s.user();
-  const ready = u?.kind === 'backoffice' && !u.mustChangePassword && (s.canAny(BACKOFFICE_PERMS) || s.can(Perm.plataformaAdmin));
+  const ready = u?.kind === 'backoffice' && !u.mustChangePassword && (s.canAny(BACKOFFICE_PERMS) || s.can(Perm.platformAdmin));
   return ready || inject(Router).createUrlTree(['/backoffice/ingresar']);
 };
 
@@ -40,12 +40,12 @@ export const permissionGuard =
     return s.canAny(perms) || inject(Router).createUrlTree([landingFor(s)]);
   };
 
-/** Primera pantalla del backoffice según la sesión. */
+/** First backoffice screen according to the session. */
 export function landingFor(s: SessionStore): string {
-  if (s.can(Perm.reportesVer)) return '/backoffice/panel';
-  if (s.can(Perm.organizacionGestionar)) return '/backoffice/negocio/empresa';
-  if (s.canAny([Perm.catalogoGestionar, Perm.preciosSucursal])) return '/backoffice/productos/catalogo';
-  if (s.can(Perm.inventarioVer)) return '/backoffice/inventario/existencias';
-  if (s.can(Perm.plataformaAdmin)) return '/backoffice/plataforma/empresas';
+  if (s.can(Perm.reportsView)) return '/backoffice/panel';
+  if (s.can(Perm.organizationManage)) return '/backoffice/negocio/empresa';
+  if (s.canAny([Perm.catalogManage, Perm.branchPrices])) return '/backoffice/productos/catalogo';
+  if (s.can(Perm.inventoryView)) return '/backoffice/inventario/existencias';
+  if (s.can(Perm.platformAdmin)) return '/backoffice/plataforma/empresas';
   return '/backoffice/sin-acceso';
 }

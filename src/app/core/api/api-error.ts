@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiErrorBody } from './api.models';
 
-/** Error normalizado: todo lo que sale de la capa HTTP se convierte a esto. */
+/** Normalized error: everything that leaves the HTTP layer is converted to this. */
 export class ApiError extends Error {
   constructor(
     readonly code: string,

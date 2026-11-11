@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Injectable, inject, signal } from '@angular/core';
 
-/** Avisos breves no bloqueantes ("Venta registrada", "Turno abierto"). */
+/** Brief non-blocking notices ("Venta registrada", "Turno abierto"). */
 @Injectable({ providedIn: 'root' })
 export class ToastService {
   readonly message = signal<string | null>(null);

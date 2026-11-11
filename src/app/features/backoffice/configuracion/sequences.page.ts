@@ -5,8 +5,8 @@ import { toApiError } from '../../../core/api/api-error';
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 /**
- * Configuración → Numeraciones. Con Siigo (D-04) la numeración y las resoluciones DIAN las lleva Siigo:
- * aquí se ven sus tipos de comprobante (solo lectura); se administran en Siigo Nube (I-24).
+ * Configuración → Numberings. With Siigo (D-04) the numbering and DIAN resolutions are kept by Siigo:
+ * here its document types are shown (read-only); they are managed in Siigo Nube (I-24).
  */
 @Component({
   selector: 'app-sequences-page',

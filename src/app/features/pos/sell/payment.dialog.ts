@@ -15,14 +15,14 @@ import { OwnerAuthComponent } from '../../../shared/owner-auth.component';
 const KIND_ICON: Record<string, string> = { cash: '💵', gateway: '📲', external_card: '💳', transfer_manual: '🏦' };
 const GATEWAY_ICON: Record<string, string> = { POS: '💳', NEQUI: '📱', PAY_BY_QR_BOLD: '🔳' };
 const BILLS = [2000, 5000, 10000, 20000, 50000, 100000];
-/** Consulta del estado mientras el datáfono procesa. */
+/** Status query while the card terminal processes. */
 const POLL_MS = 2500;
 
 /**
- * HU-6.4 / HU-6.5: cobro en línea. Al abrir, el servidor crea la venta con sus precios (borrador). Cada pago se
- * registra en el servidor: efectivo (con cambio), transferencia o datáfono externo quedan aprobados al instante;
- * Bold envía el cobro al datáfono y aquí se ve el estado en vivo. La venta se confirma solo cuando el backend
- * aprueba todos los pagos; el frontend nunca marca un pago como aprobado.
+ * US-6.4 / US-6.5: online payment. On opening, the server creates the sale with its prices (draft). Each payment is
+ * recorded on the server: cash (with change), transfer or external card terminal are approved instantly;
+ * Bold sends the charge to the card terminal and the live status is shown here. The sale is only confirmed when the backend
+ * approves all payments; the frontend never marks a payment as approved.
  */
 @Component({
   selector: 'app-payment-dialog',
@@ -117,7 +117,7 @@ export class PaymentDialog {
   readonly closed = output<void>();
   readonly paid = output<SaleDto>();
 
-  protected readonly stockPerm = Perm.inventarioAjustar;
+  protected readonly stockPerm = Perm.inventoryAdjust;
   protected readonly sale = signal<SaleDto | null>(null);
   protected readonly methods = signal<PaymentMethodDto[]>([]);
   protected readonly method = signal<PaymentMethodDto | null>(null);
@@ -132,7 +132,7 @@ export class PaymentDialog {
   protected tendered: number | null = null;
   protected reference = '';
 
-  /** Una clave por intento: el reintento tras una caída de red no duplica la venta ni el pago. */
+  /** One key per attempt: a retry after a network drop does not duplicate the sale or the payment. */
   private saleKey = newIdempotencyKey();
   private payKey = newIdempotencyKey();
   private timer: ReturnType<typeof setTimeout> | null = null;
@@ -158,7 +158,7 @@ export class PaymentDialog {
     this.payKey = newIdempotencyKey();
   }
 
-  /** [1] El servidor crea la venta con los precios vigentes; el carrito solo propone productos y cantidades. */
+  /** [1] The server creates the sale with the current prices; the cart only proposes products and quantities. */
   protected async start(): Promise<void> {
     this.busy.set(true);
     this.error.set('');
@@ -193,7 +193,7 @@ export class PaymentDialog {
     this.renewKey();
   }
 
-  /** [2] Registra el pago en el servidor; con Bold queda esperando el webhook. */
+  /** [2] Records the payment on the server; with Bold it stays waiting for the webhook. */
   protected async pay(): Promise<void> {
     const s = this.sale();
     const m = this.method();
@@ -221,7 +221,7 @@ export class PaymentDialog {
     }
   }
 
-  /** D-06: un superior con inventario.ajustar autoriza vender sin existencias; luego se cobra de nuevo. */
+  /** D-06: a supervisor with inventory.adjust authorizes selling without stock; then it is charged again. */
   protected async authorizeStock(token: string): Promise<void> {
     try {
       this.sale.set(await this.api.authorizeStock(this.sale()!.id, token));
@@ -232,7 +232,7 @@ export class PaymentDialog {
     }
   }
 
-  /** Cerrar: sin pagos se cancela la venta; con pagos aprobados queda pendiente (se ve en Ventas del turno). */
+  /** Close: with no payments the sale is cancelled; with approved payments it stays pending (visible in Shift sales). */
   protected async close(): Promise<void> {
     const s = this.sale();
     if (s && s.status !== 'confirmed' && !this.pending() && !this.hasApproved()) {
@@ -253,7 +253,7 @@ export class PaymentDialog {
     if (this.pending()) this.poll();
   }
 
-  /** HU-6.5: estado en vivo del pago en el datáfono (lo aprueba el webhook de Bold en el servidor). */
+  /** US-6.5: live status of the card-terminal payment (approved by Bold's webhook on the server). */
   private poll(): void {
     if (this.timer) clearTimeout(this.timer);
     this.timer = setTimeout(async () => {

@@ -3,7 +3,7 @@ import { AuthSessionDto, CompanySummary } from '../api/api.models';
 import { LocalStore } from '../storage/local-store';
 import { Perm, Permission } from './permissions';
 
-/** Backoffice: correo + contraseña, con refresh token. Caja: equipo vinculado + PIN, sin refresh. */
+/** Backoffice: email + password, with a refresh token. Register: paired device + PIN, no refresh. */
 export type SessionKind = 'backoffice' | 'pos';
 
 export interface SessionUser {
@@ -14,7 +14,7 @@ export interface SessionUser {
   token: string;
   expiresAt: string;
   refreshToken: string | null;
-  /** Empresa del token; null mientras deba elegir una o en la sesión de plataforma. */
+  /** The token's company; null while one still has to be chosen or in the platform session. */
   companyId: string | null;
   companies: CompanySummary[];
   mustChangePassword: boolean;
@@ -22,8 +22,8 @@ export interface SessionUser {
 }
 
 /**
- * Sesión abierta. Vive en sessionStorage: sobrevive a recargar la pestaña, pero no a cerrarla
- * (la caja es compartida y el refresh token del backoffice no debe quedar en el equipo).
+ * Open session. It lives in sessionStorage: it survives reloading the tab, but not closing it
+ * (the register is shared and the backoffice refresh token must not stay on the device).
  */
 @Injectable({ providedIn: 'root' })
 export class SessionStore {
@@ -38,11 +38,11 @@ export class SessionStore {
     const u = this._user();
     return u?.companies.find((c) => c.id === u.companyId)?.name ?? null;
   });
-  /** Rol mostrado en la barra: la API no devuelve el rol de la sesión, se deduce de los permisos. */
+  /** Role shown in the bar: the API does not return the session's role, it is deduced from the permissions. */
   readonly roleLabel = computed(() => {
     const p = this._user()?.permissions ?? [];
-    if (p.includes(Perm.plataformaAdmin)) return 'Plataforma';
-    if (p.includes(Perm.organizacionGestionar)) return 'Administrador';
+    if (p.includes(Perm.platformAdmin)) return 'Plataforma';
+    if (p.includes(Perm.organizationManage)) return 'Administrador';
     return 'Cajero';
   });
 
@@ -79,7 +79,7 @@ export class SessionStore {
     this.store.write(u);
   }
 
-  /** Una sesión guardada por la v1 (sin `kind`) no sirve contra la API v2. */
+  /** A session stored by the previous system (without `kind`) is useless against the current API. */
   private read(): SessionUser | null {
     const u = this.store.read();
     return u?.kind ? u : null;

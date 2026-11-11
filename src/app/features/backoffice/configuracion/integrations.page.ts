@@ -10,14 +10,14 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 type Env = 'sandbox' | 'production';
 
-/** Cada cuánto se consulta un cobro de prueba y por cuánto tiempo. */
+/** How often a test charge is polled and for how long. */
 const POLL_MS = 3000;
 const POLL_MAX = 60;
 
 /**
- * Configuración → Integraciones: Bold (API de datáfono). Las llaves se escriben aquí, se guardan cifradas y
- * nunca se vuelven a mostrar. Cada caja tiene su datáfono. El cobro de prueba va al datáfono real de una
- * caja abierta; en sandbox el resultado depende del monto (backend: docs/payment-integration.md §11).
+ * Configuración → Integraciones: Bold (card-terminal API). The keys are typed here, stored encrypted and
+ * never shown again. Each register has its card terminal. The test charge goes to the real card terminal of an open
+ * register; in the sandbox the result depends on the amount (backend: docs/payment-integration.md §11).
  */
 @Component({
   selector: 'app-integrations-page',
@@ -157,7 +157,7 @@ export class IntegrationsPage {
 
   constructor() {
     void this.loadAssigned();
-    // El correo guardado del ambiente se muestra al cargar (las llaves nunca).
+    // The environment's stored email is shown on load (the keys never are).
     effect(() => {
       const a = this.current();
       if (a?.sellerEmail && !this.keys.controls.sellerEmail.value) this.keys.patchValue({ sellerEmail: a.sellerEmail });
@@ -177,7 +177,7 @@ export class IntegrationsPage {
       environment: this.env(), identityKey: v.identityKey.trim() || null, secretKey: v.secretKey.trim() || null,
       sellerEmail: v.sellerEmail.trim(), activate: v.activate,
     }), 'Integración guardada');
-    // Las llaves escritas no se conservan en el formulario.
+    // The typed keys are not kept in the form.
     this.keys.patchValue({ identityKey: '', secretKey: '' });
     if (saved) this.accounts.reload();
   }
@@ -203,7 +203,7 @@ export class IntegrationsPage {
     if (p.status === 'pending') this.poll(p.id, 0);
   }
 
-  /** El resultado lo trae el webhook; aquí solo se consulta el estado guardado. */
+  /** The result comes from the webhook; here only the stored status is queried. */
   private poll(id: string, n: number): void {
     this.polling.set(true);
     this.timer = setTimeout(async () => {

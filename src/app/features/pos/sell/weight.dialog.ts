@@ -4,7 +4,7 @@ import { lineAmounts, round2 } from '../../../core/domain/sale-math';
 import { CopPipe } from '../../../shared/cop.pipe';
 import { ModalComponent } from '../../../shared/modal.component';
 
-/** Producto por peso o volumen: la cantidad admite decimales (máximo 2, lo que acepta la factura electrónica). */
+/** Product by weight or volume: the quantity accepts decimals (at most 2, which the electronic invoice accepts). */
 @Component({
   selector: 'app-weight-dialog',
   imports: [CopPipe, ModalComponent],

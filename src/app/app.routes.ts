@@ -38,7 +38,7 @@ export const routes: Routes = [
     ],
   },
 
-  // ---- Backoffice: correo y contraseña, desde cualquier equipo ----
+  // ---- Backoffice: email and password, from any device ----
   { path: 'backoffice/ingresar', title: 'Backoffice · BakeryPOS', loadComponent: () => import('./features/backoffice/backoffice-login.page').then((m) => m.BackofficeLoginPage) },
   {
     path: 'backoffice',
@@ -47,41 +47,41 @@ export const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: () => landingFor(inject(SessionStore)) },
       // Fase 2 (API v2)
-      bo('plataforma/empresas', 'Empresas de la plataforma', Perm.plataformaAdmin, () => import('./features/backoffice/plataforma/platform-companies.page').then((m) => m.PlatformCompaniesPage)),
+      bo('plataforma/empresas', 'Empresas de la plataforma', Perm.platformAdmin, () => import('./features/backoffice/plataforma/platform-companies.page').then((m) => m.PlatformCompaniesPage)),
       { path: 'sin-acceso', title: 'Sin pantallas · BakeryPOS', loadComponent: () => import('./features/backoffice/no-access.page').then((m) => m.NoAccessPage) },
-      bo('negocio/empresa', 'Empresa', Perm.organizacionGestionar, () => import('./features/backoffice/negocio/company.page').then((m) => m.CompanyPage)),
-      bo('negocio/sucursales', 'Sucursales y cajas', Perm.organizacionGestionar, () => import('./features/backoffice/negocio/branches.page').then((m) => m.BranchesPage)),
-      bo('negocio/puntos-venta', 'Puntos de venta', Perm.organizacionGestionar, () => import('./features/backoffice/negocio/points-of-sale.page').then((m) => m.PointsOfSalePage)),
-      bo('configuracion/usuarios', 'Usuarios', Perm.organizacionGestionar, () => import('./features/backoffice/configuracion/users.page').then((m) => m.UsersPage)),
-      bo('configuracion/roles', 'Roles', Perm.organizacionGestionar, () => import('./features/backoffice/configuracion/roles.page').then((m) => m.RolesPage)),
+      bo('negocio/empresa', 'Empresa', Perm.organizationManage, () => import('./features/backoffice/negocio/company.page').then((m) => m.CompanyPage)),
+      bo('negocio/sucursales', 'Sucursales y cajas', Perm.organizationManage, () => import('./features/backoffice/negocio/branches.page').then((m) => m.BranchesPage)),
+      bo('negocio/puntos-venta', 'Puntos de venta', Perm.organizationManage, () => import('./features/backoffice/negocio/points-of-sale.page').then((m) => m.PointsOfSalePage)),
+      bo('configuracion/usuarios', 'Usuarios', Perm.organizationManage, () => import('./features/backoffice/configuracion/users.page').then((m) => m.UsersPage)),
+      bo('configuracion/roles', 'Roles', Perm.organizationManage, () => import('./features/backoffice/configuracion/roles.page').then((m) => m.RolesPage)),
       // Fase 3 (API v2)
-      bo('productos/catalogo', 'Catálogo y precios', [Perm.catalogoGestionar, Perm.preciosSucursal], () => import('./features/backoffice/productos/products.page').then((m) => m.ProductsPage)),
-      bo('productos/categorias', 'Categorías', Perm.catalogoGestionar, () => import('./features/backoffice/productos/categories.page').then((m) => m.CategoriesPage)),
-      bo('productos/unidades', 'Unidades', Perm.catalogoGestionar, () => import('./features/backoffice/productos/units.page').then((m) => m.UnitsPage)),
-      bo('informes/auditoria', 'Auditoría', Perm.organizacionGestionar, () => import('./features/backoffice/informes/audit.page').then((m) => m.AuditPage)),
-      bo('configuracion/impuestos', 'Impuestos', Perm.catalogoGestionar, () => import('./features/backoffice/configuracion/taxes.page').then((m) => m.TaxesPage)),
-      bo('configuracion/historial', 'Historial de cambios', Perm.organizacionGestionar, () => import('./features/backoffice/informes/audit.page').then((m) => m.AuditPage)),
+      bo('productos/catalogo', 'Catálogo y precios', [Perm.catalogManage, Perm.branchPrices], () => import('./features/backoffice/productos/products.page').then((m) => m.ProductsPage)),
+      bo('productos/categorias', 'Categorías', Perm.catalogManage, () => import('./features/backoffice/productos/categories.page').then((m) => m.CategoriesPage)),
+      bo('productos/unidades', 'Unidades', Perm.catalogManage, () => import('./features/backoffice/productos/units.page').then((m) => m.UnitsPage)),
+      bo('informes/auditoria', 'Auditoría', Perm.organizationManage, () => import('./features/backoffice/informes/audit.page').then((m) => m.AuditPage)),
+      bo('configuracion/impuestos', 'Impuestos', Perm.catalogManage, () => import('./features/backoffice/configuracion/taxes.page').then((m) => m.TaxesPage)),
+      bo('configuracion/historial', 'Historial de cambios', Perm.organizationManage, () => import('./features/backoffice/informes/audit.page').then((m) => m.AuditPage)),
       // Fase 4 (API v2)
-      bo('inventario/existencias', 'Existencias', Perm.inventarioVer, () => import('./features/backoffice/inventario/stock.page').then((m) => m.StockPage)),
-      bo('inventario/movimientos', 'Movimientos de inventario', Perm.inventarioVer, () => import('./features/backoffice/inventario/movements.page').then((m) => m.MovementsPage)),
-      bo('inventario/ajustes', 'Ajustes de inventario', Perm.inventarioAjustar, () => import('./features/backoffice/inventario/adjustments.page').then((m) => m.AdjustmentsPage)),
+      bo('inventario/existencias', 'Existencias', Perm.inventoryView, () => import('./features/backoffice/inventario/stock.page').then((m) => m.StockPage)),
+      bo('inventario/movimientos', 'Movimientos de inventario', Perm.inventoryView, () => import('./features/backoffice/inventario/movements.page').then((m) => m.MovementsPage)),
+      bo('inventario/ajustes', 'Ajustes de inventario', Perm.inventoryAdjust, () => import('./features/backoffice/inventario/adjustments.page').then((m) => m.AdjustmentsPage)),
       // Fase 5 (API v2)
-      bo('ventas/turnos', 'Turnos', Perm.reportesVer, () => import('./features/backoffice/ventas/shifts.page').then((m) => m.ShiftsPage), { mode: 'turnos' }),
-      bo('ventas/cierres', 'Cierres', Perm.reportesVer, () => import('./features/backoffice/ventas/shifts.page').then((m) => m.ShiftsPage), { mode: 'cierres' }),
+      bo('ventas/turnos', 'Turnos', Perm.reportsView, () => import('./features/backoffice/ventas/shifts.page').then((m) => m.ShiftsPage), { mode: 'turnos' }),
+      bo('ventas/cierres', 'Cierres', Perm.reportsView, () => import('./features/backoffice/ventas/shifts.page').then((m) => m.ShiftsPage), { mode: 'cierres' }),
       // Fase 6 (API v2)
-      bo('ventas/pagos', 'Pagos', Perm.reportesVer, () => import('./features/backoffice/ventas/payments.page').then((m) => m.PaymentsPage)),
-      bo('ventas/medios-pago', 'Métodos de pago', Perm.organizacionGestionar, () => import('./features/backoffice/ventas/payment-methods.page').then((m) => m.PaymentMethodsPage)),
-      bo('configuracion/integraciones', 'Integraciones', Perm.organizacionGestionar, () => import('./features/backoffice/configuracion/integrations.page').then((m) => m.IntegrationsPage)),
+      bo('ventas/pagos', 'Pagos', Perm.reportsView, () => import('./features/backoffice/ventas/payments.page').then((m) => m.PaymentsPage)),
+      bo('ventas/medios-pago', 'Métodos de pago', Perm.organizationManage, () => import('./features/backoffice/ventas/payment-methods.page').then((m) => m.PaymentMethodsPage)),
+      bo('configuracion/integraciones', 'Integraciones', Perm.organizationManage, () => import('./features/backoffice/configuracion/integrations.page').then((m) => m.IntegrationsPage)),
       // Fase 7 (API v2)
-      bo('ventas/documentos-fiscales', 'Facturas electrónicas', Perm.ventasVer, () => import('./features/backoffice/ventas/fiscal-documents.page').then((m) => m.FiscalDocumentsPage)),
-      bo('configuracion/facturacion', 'Facturación electrónica', Perm.fiscalGestionar, () => import('./features/backoffice/configuracion/invoicing.page').then((m) => m.InvoicingPage)),
-      bo('configuracion/numeraciones', 'Numeraciones', Perm.fiscalGestionar, () => import('./features/backoffice/configuracion/sequences.page').then((m) => m.SequencesPage)),
+      bo('ventas/documentos-fiscales', 'Facturas electrónicas', Perm.salesView, () => import('./features/backoffice/ventas/fiscal-documents.page').then((m) => m.FiscalDocumentsPage)),
+      bo('configuracion/facturacion', 'Facturación electrónica', Perm.fiscalManage, () => import('./features/backoffice/configuracion/invoicing.page').then((m) => m.InvoicingPage)),
+      bo('configuracion/numeraciones', 'Numeraciones', Perm.fiscalManage, () => import('./features/backoffice/configuracion/sequences.page').then((m) => m.SequencesPage)),
       // Fase 8 (API v2)
-      bo('ventas/ventas', 'Ventas', Perm.ventasVer, () => import('./features/backoffice/ventas/sales.page').then((m) => m.SalesPage)),
+      bo('ventas/ventas', 'Ventas', Perm.salesView, () => import('./features/backoffice/ventas/sales.page').then((m) => m.SalesPage)),
       // Fase 9 (API v2)
-      bo('panel', 'Panel de control', Perm.reportesVer, () => import('./features/backoffice/panel/dashboard.page').then((m) => m.DashboardPage)),
-      bo('ventas/devoluciones', 'Devoluciones', Perm.reportesVer, () => import('./features/backoffice/ventas/returns.page').then((m) => m.ReturnsPage)),
-      bo('informes/ventas', 'Informe de ventas', Perm.reportesVer, () => import('./features/backoffice/informes/sales-report.page').then((m) => m.SalesReportPage)),
+      bo('panel', 'Panel de control', Perm.reportsView, () => import('./features/backoffice/panel/dashboard.page').then((m) => m.DashboardPage)),
+      bo('ventas/devoluciones', 'Devoluciones', Perm.reportsView, () => import('./features/backoffice/ventas/returns.page').then((m) => m.ReturnsPage)),
+      bo('informes/ventas', 'Informe de ventas', Perm.reportsView, () => import('./features/backoffice/informes/sales-report.page').then((m) => m.SalesReportPage)),
     ],
   },
 

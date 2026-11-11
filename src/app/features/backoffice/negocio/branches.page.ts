@@ -11,9 +11,9 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
 const CODE = /^[A-Za-z0-9_-]{1,20}$/;
 
 /**
- * Mi negocio → Sucursales y cajas (HU-1.3): sedes con sus cajas; crear, editar (If-Match) y
- * desactivar sedes; crear cajas. Las altas llevan Idempotency-Key: si se cae la red y se
- * reintenta el mismo formulario, la API no crea un duplicado.
+ * Mi negocio → Branches and registers (US-1.3): sites with their registers; create, edit (If-Match) and
+ * deactivate sites; create registers. Creations carry Idempotency-Key: if the network drops and
+ * the same form is retried, the API does not create a duplicate.
  */
 @Component({
   selector: 'app-branches-page',
@@ -123,7 +123,7 @@ export class BranchesPage {
     address: [''], phone: [''], cityCode: ['', Validators.pattern(/^\d{5}$/)],
   });
 
-  /** Una clave por intento: se reusa si el intento falla y se renueva al crear. */
+  /** One key per attempt: it is reused if the attempt fails and renewed on create. */
   private branchKey = newIdempotencyKey();
   private registerKey = newIdempotencyKey();
 

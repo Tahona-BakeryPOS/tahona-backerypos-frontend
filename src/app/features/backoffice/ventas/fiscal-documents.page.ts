@@ -19,8 +19,8 @@ const STATUS: Record<string, string> = {
 };
 
 /**
- * Ventas y caja → Facturas electrónicas: cada documento con su estado ante la DIAN (vía Siigo). Solo es
- * "aceptada" con CUFE. Rechazadas o con error se reintentan tras corregir la causa; el PDF lo da Siigo.
+ * Ventas y caja → Electronic invoices: each document with its status at the DIAN (via Siigo). It is only
+ * "accepted" with a CUFE. Rejected or errored ones are retried after fixing the cause; the PDF comes from Siigo.
  */
 @Component({
   selector: 'app-fiscal-documents-page',
@@ -82,7 +82,7 @@ const STATUS: Record<string, string> = {
 })
 export class FiscalDocumentsPage {
   private readonly bo = inject(BackofficeApi);
-  protected readonly canManage = inject(SessionStore).can(Perm.fiscalGestionar);
+  protected readonly canManage = inject(SessionStore).can(Perm.fiscalManage);
   protected readonly action = new AsyncAction(inject(ToastService));
   protected readonly statuses = Object.entries(STATUS);
   protected readonly from = signal(daysAgo(6));
@@ -108,7 +108,7 @@ export class FiscalDocumentsPage {
     if (list) this.attempts.set({ doc: d, list });
   }
 
-  /** Descarga con el token de la sesión (un enlace directo no lo enviaría). */
+  /** Download with the session's token (a direct link would not send it). */
   protected async pdf(d: FiscalDocumentDto): Promise<void> {
     await this.action.run(async () => {
       const blob = await this.bo.fiscalDocumentPdf(d.id);

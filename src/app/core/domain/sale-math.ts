@@ -1,9 +1,9 @@
 /**
- * Reglas de dinero de la venta: replican SaleLine.Create del backend para mostrar el total mientras el
- * cajero arma la venta. El total que se cobra siempre es el que devuelve el servidor (POST /ventas).
- * Con precio que incluye impuesto (D-07): bruto = cantidad × precio − descuento; base = bruto / (1 + tarifa);
- * impuesto = bruto − base. Si no lo incluye: base = bruto; impuesto = base × tarifa.
- * Funciones puras: se prueban sin Angular.
+ * Sale money rules: they replicate the backend's SaleLine.Create to show the total while the
+ * cashier builds the sale. The total that is charged is always the one the server returns (POST /ventas).
+ * With a price that includes tax (D-07): gross = quantity × price − discount; base = gross / (1 + rate);
+ * tax = gross − base. If it does not include it: base = gross; tax = base × rate.
+ * Pure functions: they are tested without Angular.
  */
 
 export const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
@@ -12,7 +12,7 @@ export interface LineInput {
   quantity: number;
   unitPrice: number;
   priceIncludesTax: boolean;
-  /** Descuento en dinero (con el mismo criterio de impuesto que el precio). */
+  /** Discount in money (with the same tax criterion as the price). */
   discountAmount: number;
   taxRate: number;
 }

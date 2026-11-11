@@ -19,8 +19,8 @@ const FISCAL: Record<string, string> = {
 };
 
 /**
- * Ventas y caja → Ventas: consulta por fechas, sucursal y estado, con el detalle de líneas, pagos y factura.
- * Cada venta tiene sus estados separados (venta, pago, inventario, factura). La anulación llega en la fase 9 (D-11).
+ * Ventas y caja → Sales: query by dates, branch and status, with the detail of lines, payments and invoice.
+ * Each sale has its separate states (sale, payment, inventory, invoice). The void arrives in phase 9 (D-11).
  */
 @Component({
   selector: 'app-sales-page',

@@ -5,8 +5,8 @@ import { PosApi } from '../api/pos-api';
 import { ShiftStore } from './shift.store';
 
 /**
- * Efectivo de la sesión de caja (HU-5.3, HU-5.4): movimientos, motivos y resumen. El esperado lo
- * calcula el servidor con todos los movimientos (ventas incluidas), así que aquí no se recalcula.
+ * Cash of the cash session (US-5.3, US-5.4): movements, reasons and summary. The expected amount is
+ * computed by the server with all movements (sales included), so it is not recalculated here.
  */
 @Injectable({ providedIn: 'root' })
 export class CashStore {
@@ -37,8 +37,8 @@ export class CashStore {
   }
 
   /**
-   * Registra un ingreso o retiro. El retiro no puede superar el esperado (también lo valida el servidor)
-   * y, si quien atiende no tiene caja.retiro, va con el token del superior que autoriza.
+   * Records an income or withdrawal. A withdrawal cannot exceed the expected amount (the server validates it too)
+   * and, if whoever is serving does not hold cash.withdrawal, it goes with the authorizing supervisor's token.
    */
   async register(kind: 'income' | 'expense', amount: number, reasonId: string, note: string | null, idempotencyKey: string, authorizerToken?: string): Promise<void> {
     if (!(amount > 0)) throw new ApiError('VALIDACION', 'El monto debe ser mayor a cero.', 400);

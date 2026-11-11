@@ -6,16 +6,16 @@ import {
   SaleListItemV2, SaleReturnLineInput,
 } from './api.models';
 
-/** Encabezado con el token opaco del equipo vinculado (login por PIN y lista de cajeros). */
+/** Header with the opaque token of the paired device (PIN login and the cashier list). */
 export const DEVICE_TOKEN_HEADER = 'X-Device-Token';
 
 const device = (token: string) => ({ headers: { [DEVICE_TOKEN_HEADER]: token } });
 
 /**
- * Gateway de la caja (POS) y de las sesiones. Los componentes y stores no usan HttpClient directo:
- * el contrato vive en un solo lugar y todos los errores salen como ApiError.
- * API v2: dispositivo y sesiones (fase 2), sesiones de caja (fase 5), venta y cobro (fase 8). Los
- * reportes son de la v1 y se adaptan en la fase 9.
+ * Gateway of the register (POS) and of the sessions. Components and stores do not use HttpClient directly:
+ * the contract lives in a single place and all errors come out as ApiError.
+ * API: device and sessions (phase 2), cash sessions (phase 5), sale and payment (phase 8). The
+ * reports come from the previous system and are adapted in phase 9.
  */
 @Injectable({ providedIn: 'root' })
 export class PosApi {
@@ -39,7 +39,7 @@ export class PosApi {
     return this.api.post('/auth/login', body);
   }
 
-  /** Emite tokens para una empresa del usuario; revoca el refresh token anterior. */
+  /** Issues tokens for one of the user's companies; revokes the previous refresh token. */
   selectCompany(companyId: string, refreshToken: string | null): Promise<AuthSessionDto> {
     return this.api.post('/auth/select-company', { companyId, refreshToken });
   }
@@ -52,12 +52,12 @@ export class PosApi {
     return this.api.post('/auth/logout', { refreshToken });
   }
 
-  // Sesiones de caja (fase 5)
+  // Cash sessions (phase 5)
   openSession(cashRegisterId: string, openingAmount: number, idempotencyKey = newIdempotencyKey()): Promise<CashSessionDto> {
     return this.api.post(`/cajas/${cashRegisterId}/sesiones`, { openingAmount }, { idempotencyKey });
   }
 
-  /** Sesión abierta de la caja; ApiError NO_ENCONTRADO (404) si no hay. */
+  /** The register's open session; ApiError NO_ENCONTRADO (404) if there is none. */
   openSessionOf(cashRegisterId: string): Promise<CashSessionDto> {
     return this.api.get(`/cajas/${cashRegisterId}/sesion-abierta`);
   }
@@ -66,12 +66,12 @@ export class PosApi {
     return this.api.get(`/sesiones-caja/${sessionId}/resumen`);
   }
 
-  /** Cierre bloqueado con 422 PAGO_PENDIENTE si hay pagos sin resolver (D-12). */
+  /** Close blocked with 422 PAGO_PENDIENTE if there are unresolved payments (D-12). */
   closeSession(sessionId: string, countedAmount: number, notes: string | null, idempotencyKey = newIdempotencyKey()): Promise<CashSessionDto> {
     return this.api.post(`/sesiones-caja/${sessionId}/cierre`, { countedAmount, notes }, { idempotencyKey });
   }
 
-  /** El retiro lo envía con su token el superior que autoriza (`asToken`), con permiso caja.retiro. */
+  /** The withdrawal is sent with their token by the authorizing supervisor (`asToken`), with the cash.withdrawal permission. */
   registerMovement(sessionId: string, body: { kind: 'income' | 'expense'; amount: number; reasonId: string; note: string | null },
     idempotencyKey: string, asToken?: string): Promise<CashMovementDto> {
     return this.api.post(`/sesiones-caja/${sessionId}/movimientos`, body, { idempotencyKey, asToken });
@@ -86,7 +86,7 @@ export class PosApi {
   }
 
   // Ventas (fase 8)
-  /** Productos vendibles en la sucursal (activos, disponibles y con precio), todas las páginas. */
+  /** Products sellable at the branch (active, available and with a price), all pages. */
   async posProducts(branchId: string): Promise<PosProduct[]> {
     const all: PosProduct[] = [];
     for (let page = 1; ; page++) {
@@ -117,7 +117,7 @@ export class PosApi {
     return this.api.put(`/ventas/${id}/cliente`, { customerIdentification });
   }
 
-  /** Lo envía el superior que autoriza (su token): vender sin existencias en productos "bloquear" (D-06). */
+  /** Sent by the authorizing supervisor (their token): selling without stock on "block" products (D-06). */
   authorizeStock(id: string, authorizerToken: string): Promise<SaleDto> {
     return this.api.post(`/ventas/${id}/autorizar-existencias`, {}, { asToken: authorizerToken });
   }
@@ -134,12 +134,12 @@ export class PosApi {
     return this.api.get('/ventas', { sesionCajaId: cashSessionId, page: 1, pageSize: 200 });
   }
 
-  /** D-11: lo envía quien autoriza (ventas.anular) con su token. */
+  /** D-11: sent by whoever authorizes (sales.void) with their token. */
   voidSale(id: string, reason: string, authorizerToken?: string): Promise<SaleDto> {
     return this.api.post(`/ventas/${id}/anulacion`, { reason }, authorizerToken ? { asToken: authorizerToken } : {});
   }
 
-  /** HU-9.2: lo envía quien autoriza (devoluciones.aprobar) con su token; el efectivo sale de esta caja. */
+  /** US-9.2: sent by whoever authorizes (returns.approve) with their token; the cash comes out of this register. */
   returnSale(id: string, body: { cashRegisterId: string; reason: string; lines: SaleReturnLineInput[] }, idempotencyKey: string,
     authorizerToken?: string): Promise<SaleDto> {
     return this.api.post(`/ventas/${id}/devoluciones`, body, authorizerToken ? { asToken: authorizerToken, idempotencyKey } : { idempotencyKey });

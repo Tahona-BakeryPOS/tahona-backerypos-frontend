@@ -7,7 +7,7 @@ import { ModalComponent } from '../../../shared/modal.component';
 import { ToastService } from '../../../shared/toast.service';
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
-/** Códigos del anexo técnico DIAN que valida la API (I-16; verificar con el contador antes de la fase 7). */
+/** DIAN technical annex codes validated by the API (I-16; verify with the accountant before phase 7). */
 const REGIMES = [
   { code: '48', name: '48 · Responsable de IVA' },
   { code: '49', name: '49 · No responsable de IVA' },
@@ -20,7 +20,7 @@ const RESPONSIBILITIES = [
   { code: 'R-99-PN', name: 'R-99-PN · No aplica (otros)' },
 ];
 
-/** Dígito de verificación del NIT (DIAN, módulo 11). Se propone; el operador puede corregirlo. */
+/** NIT check digit (DIAN, modulus 11). It is proposed; the operator can correct it. */
 export function nitCheckDigit(nit: string): number | null {
   const digits = nit.replace(/\D/g, '');
   if (!digits || digits.length > 15) return null;
@@ -32,9 +32,9 @@ export function nitCheckDigit(nit: string): number | null {
 }
 
 /**
- * Plataforma → Empresas (D-09): el administrador de la plataforma da de alta empresas y su
- * propietario. La respuesta trae la contraseña de un solo uso del propietario, que se muestra una
- * sola vez; por eso el alta no usa Idempotency-Key (I-14) y un reintento choca con NIT_DUPLICADO.
+ * Plataforma → Companies (D-09): the platform administrator onboards companies and their
+ * owner. The response carries the owner's one-time password, which is shown only
+ * once; that is why onboarding does not use Idempotency-Key (I-14) and a retry collides with NIT_DUPLICADO.
  */
 @Component({
   selector: 'app-platform-companies-page',

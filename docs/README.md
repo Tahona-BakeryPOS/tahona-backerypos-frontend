@@ -1,21 +1,21 @@
-# Documentación del frontend
+# Frontend documentation
 
-Qué hay aquí y qué vive en el backend.
+What is here and what lives in the backend.
 
-| Tema | Dónde |
+| Topic | Where |
 |---|---|
-| Contexto y convenciones para Claude | [`../CLAUDE.md`](../CLAUDE.md) |
-| Pruebas E2E (Playwright) | [`../e2e/README.md`](../e2e/README.md) |
-| Decisiones del frontend | [`decisiones.md`](decisiones.md) |
-| Mockups de las pantallas | [`mockups/`](mockups/) |
-| Despliegue propio (Caddy + proxy del API) | [`../deploy/`](../deploy/) |
-| Contrato HTTP del API | repo backend → `docs/api-contracts.md` |
-| Requisitos y casos de uso | repo backend → `docs/requirements.md`, `docs/estado-casos-de-uso.md` |
-| Decisiones (D-xx / I-xx) | repo backend → `docs/decisions.md` |
-| Pagos (Bold) e integración fiscal (Siigo) | repo backend → `docs/payment-integration.md`, `docs/electronic-invoicing.md` |
-| Despliegue y operación | repo backend → `docs/runbooks.md` |
+| Context and conventions for Claude | [`../CLAUDE.md`](../CLAUDE.md) |
+| E2E tests (Playwright) | [`../e2e/README.md`](../e2e/README.md) |
+| Frontend decisions | [`decisions.md`](decisions.md) |
+| Screen mockups | [`mockups/`](mockups/) |
+| Own deployment (Caddy + API proxy) | [`../deploy/`](../deploy/) |
+| API HTTP contract | backend repo → `docs/api-contracts.md` |
+| Requirements and use cases | backend repo → `docs/requirements.md`, `docs/use-case-status.md` |
+| Decisions (D-xx / I-xx) | backend repo → `docs/decisions.md` |
+| Payments (Bold) and tax integration (Siigo) | backend repo → `docs/payment-integration.md`, `docs/electronic-invoicing.md` |
+| Deployment and operations | backend repo → `docs/runbooks.md` |
 
-Backend: <https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend/tree/v2/docs>
+Backend: <https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend/tree/main/docs>
 
-Las decisiones y especificaciones del sistema se mantienen en el backend para tener una sola fuente; aquí se documenta
-únicamente lo propio del cliente (pantallas, rutas, estado de la UI, pruebas E2E).
+System decisions and specifications are kept in the backend so there is a single source; this folder only documents what is
+specific to the client (screens, routes, UI state, E2E tests).

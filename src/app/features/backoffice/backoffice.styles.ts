@@ -1,6 +1,6 @@
 /**
- * Estilos comunes de las páginas del backoffice (encabezado, barra de filtros, estados).
- * Se comparten como `styles` de componente para no crecer el CSS global de la caja.
+ * Common styles of the backoffice pages (header, filter bar, states).
+ * They are shared as component `styles` so as not to grow the register's global CSS.
  */
 export const BO_PAGE_STYLES = `
   :host { display: block; padding: 20px max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px)); }

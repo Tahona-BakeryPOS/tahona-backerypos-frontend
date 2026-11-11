@@ -1,89 +1,91 @@
 # Tahona.BakeryPOS — Frontend
 
-Aplicación web progresiva (PWA) del punto de venta (POS) SaaS para panaderías en Colombia. Incluye el **POS de caja**,
-pensado para tablet o PC, y el **backoffice** de administración.
+Progressive web app (PWA) for a bakery point-of-sale (POS) SaaS in Colombia. It includes the **cashier POS**,
+designed for a tablet or PC, and the administration **backoffice**.
 
-La API está en su propio repositorio:
-[tahona-backerypos-backend](https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend), que además guarda el
-diseño del sistema y el contrato del API.
+The API lives in its own repository:
+[tahona-backerypos-backend](https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend), which also holds the
+system design and the API contract.
 
-## Qué incluye
+> The screens are in Spanish because the product is for Colombian bakeries. Code, comments and documentation are in English.
 
-**POS de caja**
-- Vinculación del equipo a una caja y entrada con PIN.
-- Apertura de caja, ingresos y retiros de efectivo, y cierre del turno.
-- Venta con cobro en el datáfono (Bold), autorización de existencias y comprobante con el estado de la factura.
-- Ventas del turno, anulaciones y devoluciones.
+## What it includes
+
+**Cashier POS**
+- Pairing the device to a cash register and PIN sign-in.
+- Opening a cash session, cash income and withdrawals, and closing the shift.
+- Sale with card-terminal payment (Bold), stock authorization and a receipt showing the invoice status.
+- Shift sales, voids and returns.
 
 **Backoffice**
-- Plataforma, empresa, sucursales, cajas, usuarios y roles.
-- Catálogo, precios, categorías, unidades e impuestos.
-- Existencias, movimientos y ajustes de inventario.
-- Turnos y cierres, pagos y métodos de pago.
-- Integraciones (Bold), facturación electrónica, numeraciones y facturas.
-- Ventas, devoluciones, informe de ventas, panel de control y auditoría.
+- Platform, company, branches, cash registers, users and roles.
+- Catalog, prices, categories, units and taxes.
+- Stock, movements and inventory adjustments.
+- Shifts and closings, payments and payment methods.
+- Integrations (Bold), electronic invoicing, numberings and invoices.
+- Sales, returns, sales report, dashboard and audit.
 
-Las pantallas se muestran según los permisos del usuario.
+Screens are shown according to the user's permissions.
 
-## Tecnología
+## Technology
 
-Angular 22 (componentes standalone, signals, `OnPush`) · TypeScript · Vitest · Playwright · service worker (PWA).
+Angular 22 (standalone components, signals, `OnPush`) · TypeScript · Vitest · Playwright · service worker (PWA).
 
-## Estructura
+## Structure
 
 ```
 src/app/
-  core/       cliente HTTP, modelos del API, autenticación, catálogo, dispositivo, venta y turno
+  core/       HTTP client, API models, authentication, catalog, device, sales and shift
   features/   backoffice, login, pairing, pos, shift
-  shared/     pipes, notificaciones y utilidades de interfaz
-e2e/          pruebas de extremo a extremo (Playwright)
-docs/         documentación propia del frontend
+  shared/     pipes, notifications and UI utilities
+e2e/          end-to-end tests (Playwright)
+docs/         the frontend's own documentation
 ```
 
-## Requisitos
+## Requirements
 
-- Node.js 24 y npm
-- La API en ejecución (por defecto en `https://localhost:7246`; ver `proxy.conf.json`)
+- Node.js 24 and npm
+- The API running (by default at `https://localhost:7246`; see `proxy.conf.json`)
 
-## Puesta en marcha
+## Getting started
 
 ```bash
 npm ci
 npm start
 ```
 
-Abre `http://localhost:4200/`. Las llamadas a `/api` se reenvían a la API mediante `proxy.conf.json`.
+Open `http://localhost:4200/`. Calls to `/api` are forwarded to the API through `proxy.conf.json`.
 
 ## Scripts
 
-| Comando | Descripción |
+| Command | Description |
 |---|---|
-| `npm start` | Servidor de desarrollo |
-| `npm test` | Pruebas unitarias |
-| `npx ng build --configuration production` | Compilación de producción en `dist/pos` |
-| `npm run e2e` | Pruebas E2E con Playwright (ver [`e2e/README.md`](e2e/README.md)) |
-| `npm run e2e:typecheck` | Verifica que las pruebas E2E compilan |
+| `npm start` | Development server |
+| `npm test` | Unit tests |
+| `npx ng build --configuration production` | Production build into `dist/pos` |
+| `npm run e2e` | E2E tests with Playwright (see [`e2e/README.md`](e2e/README.md)) |
+| `npm run e2e:typecheck` | Checks that the E2E tests compile |
 
-## Docker y despliegue
+## Docker and deployment
 
-El `Dockerfile` compila la aplicación y la sirve con Caddy, que además termina HTTPS y hace de proxy de `/api` hacia el API
-(`API_UPSTREAM`). El despliegue es propio de este repo y no depende del backend:
+The `Dockerfile` builds the app and serves it with Caddy, which also terminates HTTPS and proxies `/api` to the API
+(`API_UPSTREAM`). The deployment belongs to this repo and does not depend on the backend:
 
 ```bash
 cd deploy
-cp .env.deploy.example .env.production   # completar DOMAIN, ACME_EMAIL y API_UPSTREAM
+cp .env.deploy.example .env.production   # fill in DOMAIN, ACME_EMAIL and API_UPSTREAM
 bash ./scripts/deploy.sh .env.production
 ```
 
 ## CI
 
-`.github/workflows/ci.yml`: instala dependencias, ejecuta las pruebas, compila para producción, verifica los tipos de
-las pruebas E2E, construye la imagen Docker y publica el resultado de la compilación como artefacto.
+`.github/workflows/ci.yml`: installs dependencies, runs the tests, builds for production, type-checks the E2E tests,
+builds the Docker image and publishes the build output as an artifact.
 
-## Documentación
+## Documentation
 
-- [`CLAUDE.md`](CLAUDE.md) — contexto y convenciones del proyecto
-- [`docs/README.md`](docs/README.md) — índice de documentación
-- [`e2e/README.md`](e2e/README.md) — pruebas E2E
-- [Guía general para personas no técnicas](https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend/blob/main/docs/guia-general.md) (en el repositorio del backend)
-- Contrato del API y decisiones: carpeta `docs/` del repositorio del backend
+- [`CLAUDE.md`](CLAUDE.md) — project context and conventions
+- [`docs/README.md`](docs/README.md) — documentation index
+- [`e2e/README.md`](e2e/README.md) — E2E tests
+- [General guide for non-technical readers](https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend/blob/main/docs/general-guide.md) (in the backend repository)
+- API contract and decisions: `docs/` folder of the backend repository

@@ -7,7 +7,7 @@ import { CopPipe } from '../../../shared/cop.pipe';
 import { daysAgo } from '../../../shared/date-range.component';
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
-/** Panel de control: lo que el dueño mira primero cada día (ventas de hoy, cajas abiertas, diferencias de caja). */
+/** Dashboard: what the owner looks at first every day (today's sales, open registers, cash differences). */
 @Component({
   selector: 'app-dashboard-page',
   imports: [CopPipe, DatePipe, RouterLink],
@@ -66,7 +66,7 @@ export class DashboardPage {
   protected readonly today = resource({ loader: () => this.bo.salesReport({ from: daysAgo(0), to: daysAgo(0) }) });
   protected readonly branches = resource({ loader: () => this.bo.branches() });
   protected readonly shifts = resource({ loader: () => this.bo.cashSessions({ from: daysAgo(6), to: daysAgo(0) }, 'closed') });
-  /** Una sesión puede seguir abierta desde días atrás: se miran 30 días. */
+  /** A session may have been open for days: 30 days are looked at. */
   protected readonly open = resource({ loader: () => this.bo.cashSessions({ from: daysAgo(30), to: daysAgo(0) }, 'open') });
 
   protected readonly avgTicket = computed(() => {

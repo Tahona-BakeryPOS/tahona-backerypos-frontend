@@ -2,9 +2,9 @@ import { expect, Page, test } from '@playwright/test';
 import { copDigits, E2EState, loadState } from '../fixtures';
 
 /**
- * Criterio de salida del MVP (testing-strategy.md), parte en efectivo: caja vinculada → PIN → abrir caja → dos ventas →
- * anulación (D-11, supervisor con PIN) → devolución parcial → cierre cuadrado → informe del backoffice con lo mismo.
- * Corre en orden y comparte la página (un solo turno).
+ * MVP exit criterion (testing-strategy.md), cash part: paired register → PIN → open cash session → two sales →
+ * void (D-11, supervisor with PIN) → partial return → balanced close → backoffice report with the same.
+ * It runs in order and shares the page (a single shift).
  */
 test.describe.configure({ mode: 'serial' });
 
@@ -65,7 +65,7 @@ test('devuelve una unidad de la segunda venta', async () => {
 });
 
 test('cierra la caja sin diferencia', async () => {
-  // Esperado = inicial + 2 ventas − anulación − devolución de una unidad.
+  // Expected = opening + 2 sales − void − return of one unit.
   const expected = OPENING + s.product.price * 3 - s.product.price - s.product.price;
   await page.getByRole('button', { name: 'Cerrar caja' }).click();
   await page.getByLabel('Efectivo contado').fill(String(expected));
@@ -104,7 +104,7 @@ async function sell(units: number): Promise<void> {
   await page.getByRole('button', { name: 'Nueva venta' }).click();
 }
 
-/** El cajero no tiene el permiso: autoriza el supervisor con su PIN (OwnerAuthComponent). */
+/** The cashier does not have the permission: the supervisor authorizes with their PIN (OwnerAuthComponent). */
 async function authorize(): Promise<void> {
   await page.getByLabel('Quién autoriza').selectOption({ label: s.supervisor.name });
   await page.getByLabel('PIN').fill(s.supervisor.pin);

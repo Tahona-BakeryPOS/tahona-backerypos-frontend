@@ -1,9 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * E2E de la PWA contra una API real con PostgreSQL (testing-strategy.md). No levanta servidores: apunta a un ambiente
- * ya corriendo (staging, o local con `ng serve` + API). Variables en e2e/README.md. Pagos solo en efectivo y sin
- * facturación activa: Bold y Siigo se prueban aparte en sus sandbox (runbook).
+ * E2E of the PWA against a real API with PostgreSQL (testing-strategy.md). It starts no servers: it points at an environment
+ * already running (staging, or local with `ng serve` + API). Variables in e2e/README.md. Payments only in cash and with
+ * invoicing off: Bold and Siigo are tested separately in their sandboxes (runbook).
  */
 export default defineConfig({
   testDir: './tests',

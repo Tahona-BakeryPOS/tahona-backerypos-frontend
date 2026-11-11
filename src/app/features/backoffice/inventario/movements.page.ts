@@ -11,7 +11,7 @@ export const MOVEMENT_KINDS: Record<string, string> = {
   adjustment_in: 'Ajuste (entrada)', adjustment_out: 'Ajuste (salida)',
 };
 
-/** Productos e inventario → Movimientos: libro de solo inserción, del más reciente al más antiguo. */
+/** Productos e inventario → Movements: an insert-only ledger, newest to oldest. */
 @Component({
   selector: 'app-movements-page',
   imports: [FormsModule, DatePipe, DecimalPipe],
@@ -88,7 +88,7 @@ export class MovementsPage {
       : undefined),
     loader: ({ params: p }) => this.bo.stockMovements({
       ...p,
-      // Días completos en la hora local del navegador.
+      // Whole days in the browser's local time.
       from: p.from ? new Date(`${p.from}T00:00:00`).toISOString() : null,
       to: p.to ? new Date(`${p.to}T23:59:59.999`).toISOString() : null,
       pageSize: PAGE_SIZE,

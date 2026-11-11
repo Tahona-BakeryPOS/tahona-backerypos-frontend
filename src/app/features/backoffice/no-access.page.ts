@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BO_PAGE_STYLES } from './backoffice.styles';
 
 /**
- * Sesión de backoffice sin ninguna pantalla disponible todavía (p. ej. un rol con solo reportes:
- * los informes contra la API v2 llegan en su fase).
+ * A backoffice session with no screen available yet (e.g. a role with only reports:
+ * the reports against the API arrive in their phase).
  */
 @Component({
   selector: 'app-no-access-page',

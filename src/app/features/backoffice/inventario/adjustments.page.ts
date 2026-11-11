@@ -11,13 +11,13 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 type Tab = 'ajuste' | 'inicial' | 'conteo';
 
-/** Productos de la ubicación que se cargan para elegir y contar (máximo de la API). */
+/** Products of the location that are loaded to choose and count (the API's maximum). */
 const ROWS = 200;
 
 /**
- * Productos e inventario → Ajustes (HU-4.1, HU-4.4): ajuste con motivo obligatorio, existencia inicial
- * (una vez por producto y ubicación) y conteo físico, que ajusta cada producto a lo contado. Quien
- * registra queda como autorizador. Un reintento por caída de red reusa la misma Idempotency-Key.
+ * Productos e inventario → Adjustments (US-4.1, US-4.4): an adjustment with a mandatory reason, initial stock
+ * (once per product and location) and physical count, which adjusts each product to the counted amount. Whoever
+ * records it is the authorizer. A retry after a network drop reuses the same Idempotency-Key.
  */
 @Component({
   selector: 'app-adjustments-page',
@@ -122,7 +122,7 @@ export class AdjustmentsPage {
   protected readonly branchId = signal('');
   protected readonly locationId = signal('');
   protected readonly q = signal('');
-  /** Cantidades escritas en las tablas de inicial y conteo, por producto. */
+  /** Quantities typed in the initial and count tables, per product. */
   protected readonly qty = signal<Record<string, number | null>>({});
   protected readonly countResult = signal<CountResultLine[] | null>(null);
 
@@ -153,7 +153,7 @@ export class AdjustmentsPage {
     note: [''],
   });
 
-  /** Clave del intento en curso: se renueva al cambiar los datos o al registrar con éxito. */
+  /** Key of the attempt in progress: it is renewed when the data changes or on a successful registration. */
   private key = newIdempotencyKey();
 
   constructor() {
@@ -166,7 +166,7 @@ export class AdjustmentsPage {
       if (locations.length && !locations.some((l) => l.id === this.locationId()))
         this.locationId.set((locations.find((l) => l.isDefault) ?? locations[0]).id);
     });
-    // Cambiar de pestaña o de ubicación empieza un intento nuevo.
+    // Switching tab or location starts a new attempt.
     effect(() => {
       this.tab();
       this.locationId();

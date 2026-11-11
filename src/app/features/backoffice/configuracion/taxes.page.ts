@@ -15,8 +15,8 @@ const KINDS: { value: TaxKind; label: string }[] = [
 ];
 
 /**
- * Configuración → Impuestos. La tarifa no se edita: para otra tarifa se crea otro impuesto y se
- * desactiva el anterior. Las ventas guardan copia de la tarifa aplicada.
+ * Configuración → Taxes. The rate is not edited: for another rate another tax is created and the
+ * previous one is deactivated. Sales store a copy of the rate applied.
  */
 @Component({
   selector: 'app-taxes-page',

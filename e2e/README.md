@@ -1,33 +1,33 @@
-# Pruebas E2E (Playwright)
+# E2E tests (Playwright)
 
-Recorren el flujo de caja en efectivo contra una API real con PostgreSQL: vincular la caja, entrar con PIN, abrir caja,
-dos ventas, anulación y devolución autorizadas con el PIN de un supervisor, cierre sin diferencia e informe del backoffice.
-No prueban Bold ni Siigo: esos se prueban en sus sandbox (runbook del backend, "Pruebas con proveedores").
+They walk through the cash flow against a real API with PostgreSQL: pair the register, sign in with a PIN, open the cash
+session, make two sales, void and return authorized with a supervisor's PIN, close with no difference and run the
+backoffice report. They do not test Bold or Siigo: those are tested in their sandboxes (the backend runbook, "Tests with providers").
 
-## Requisitos
+## Requirements
 
-- Un ambiente corriendo: local (`ng serve` + API + Postgres de desarrollo) o **staging**. Nunca producción: el
-  setup se niega si la URL no es `localhost` o no contiene `staging`.
-- Una empresa de pruebas con su propietario (contraseña definitiva ya cambiada), sin facturación electrónica activa.
-- Navegador: `npx playwright install chromium` (una vez).
+- A running environment: local (`ng serve` + API + development Postgres) or **staging**. Never production: the
+  setup refuses to run if the URL is not `localhost` or does not contain `staging`.
+- A test company with its owner (final password already set), with electronic invoicing turned off.
+- Browser: `npx playwright install chromium` (once).
 
 ## Variables
 
-| Variable | Para qué |
+| Variable | What it is for |
 |---|---|
-| `E2E_BASE_URL` | URL del frontend (por defecto `http://localhost:4200`) |
-| `E2E_API_URL` | URL de la API (por defecto `$E2E_BASE_URL/api/v1`) |
-| `E2E_OWNER_EMAIL`, `E2E_OWNER_PASSWORD` | Propietario de la empresa de pruebas |
-| `E2E_COMPANY_ID` | Opcional, si el usuario tiene varias empresas |
-| `E2E_IGNORE_HTTPS_ERRORS` | `1` con el certificado de desarrollo local |
+| `E2E_BASE_URL` | Frontend URL (default `http://localhost:4200`) |
+| `E2E_API_URL` | API URL (default `$E2E_BASE_URL/api/v1`) |
+| `E2E_OWNER_EMAIL`, `E2E_OWNER_PASSWORD` | Owner of the test company |
+| `E2E_COMPANY_ID` | Optional, if the user belongs to several companies |
+| `E2E_IGNORE_HTTPS_ERRORS` | `1` with the local development certificate |
 
-Cada corrida crea su sucursal, caja, cajero, supervisor y producto (nombres con sufijo de la corrida) y deja
-`e2e/.state.json` con los PIN generados (no versionado).
+Each run creates its own branch, cash register, cashier, supervisor and product (names carry a run suffix) and leaves
+`e2e/.state.json` with the generated PINs (not versioned).
 
-## Correr
+## Running
 
 ```bash
 npm run e2e
 ```
 
-El reporte HTML queda en `e2e/playwright-report/`.
+The HTML report is written to `e2e/playwright-report/`.

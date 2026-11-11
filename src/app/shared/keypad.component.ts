@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, output } from '@angular/core';
 
 export type KeypadKey = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'back' | 'ok';
 
-/** Teclado numérico táctil (objetivos de 64 px) para PIN y montos. */
+/** Touch numeric keypad (64 px targets) for PINs and amounts. */
 @Component({
   selector: 'app-keypad',
   changeDetection: ChangeDetectionStrategy.OnPush,

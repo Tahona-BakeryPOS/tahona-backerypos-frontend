@@ -6,9 +6,9 @@ import { ToastService } from '../../../shared/toast.service';
 import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 /**
- * Mi negocio → Empresa (HU-1.2). Razón social, NIT y datos fiscales los fija la plataforma en el alta
- * y aquí solo se ven; el propietario edita nombre comercial, contacto y zona horaria. El guardado
- * envía la versión leída (If-Match): si otra persona cambió la empresa, la API responde 412.
+ * Mi negocio → Company (US-1.2). Legal name, NIT and tax data are set by the platform at onboarding
+ * and are only viewed here; the owner edits trade name, contact and time zone. Saving
+ * sends the version read (If-Match): if someone else changed the company, the API answers 412.
  */
 @Component({
   selector: 'app-company-page',

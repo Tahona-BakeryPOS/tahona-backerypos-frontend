@@ -1,6 +1,6 @@
 import { PosProduct } from '../../../core/api/api.models';
 
-/** Ícono por palabra clave del nombre o la categoría, mientras el catálogo no tenga imágenes. */
+/** Icon by keyword of the name or category, while the catalog has no images. */
 const RULES: [RegExp, string][] = [
   [/croissant|hojaldr|milhoja/i, '🥐'],
   [/bono|queso|almoj/i, '🧀'],

@@ -12,8 +12,8 @@ import { OwnerAuthComponent } from '../../../shared/owner-auth.component';
 export const VOID_REASONS = ['Error de digitación', 'Cliente desistió', 'Cobro duplicado', 'Producto equivocado'];
 
 /**
- * D-11: anulación total de una venta del turno abierto. Devuelve todo en efectivo, reversa el inventario y, si la
- * factura ya fue aceptada, emite la nota crédito. Sin el permiso, la autoriza un superior con su PIN.
+ * D-11: full void of a sale of the open shift. It returns everything in cash, reverses the inventory and, if the
+ * invoice was already accepted, issues the credit note. Without the permission, a supervisor authorizes it with their PIN.
  */
 @Component({
   selector: 'app-void-sale-dialog',
@@ -56,9 +56,9 @@ export class VoidSaleDialog {
   readonly closed = output<void>();
   readonly voided = output<SaleDto>();
 
-  protected readonly perm = Perm.ventasAnular;
+  protected readonly perm = Perm.salesVoid;
   protected readonly reasons = VOID_REASONS;
-  protected readonly needsAuthorizer = computed(() => !this.session.can(Perm.ventasAnular));
+  protected readonly needsAuthorizer = computed(() => !this.session.can(Perm.salesVoid));
   protected preset = '';
   protected other = '';
   protected readonly error = signal('');

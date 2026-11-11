@@ -14,8 +14,8 @@ const NOTE: Record<string, string> = {
 };
 
 /**
- * Ventas y caja → Devoluciones (HU-9.2): quién autorizó, motivo, dinero devuelto en efectivo y estado de la nota
- * crédito. Las devoluciones se registran en el POS (salen de la caja abierta).
+ * Ventas y caja → Returns (US-9.2): who authorized, reason, money returned in cash and credit-note
+ * status. Returns are recorded in the POS (they come out of the open register).
  */
 @Component({
   selector: 'app-returns-page',
