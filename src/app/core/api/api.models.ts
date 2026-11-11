@@ -4,7 +4,7 @@
  * What is marked "phase 2" already follows the backend API; the rest comes from the previous system and each phase adapts it.
  */
 
-// ---- Sesiones (fase 2) ----
+// ---- Sessions (phase 2) ----
 
 /** POST /auth/login-pin (X-Device-Token header of the paired device). */
 export interface LoginPinRequest {
@@ -23,7 +23,7 @@ export interface CompanySummary {
   name: string;
 }
 
-/** Response of login, select-company, refresh, cambiar-contrasena and login-pin. */
+/** Response of login, select-company, refresh, change-password and login-pin. */
 export interface AuthSessionDto {
   accessToken: string;
   expiresAt: string;
@@ -65,9 +65,9 @@ export interface SalesReportDto {
 
 /** Error body of ResultExtensions.ToErrorResult. */
 export interface ApiErrorBody {
-  codigo?: string;
-  mensaje?: string;
-  detalles?: Record<string, string[]> | null;
+  code?: string;
+  message?: string;
+  details?: Record<string, string[]> | null;
 }
 
 /**
@@ -83,9 +83,9 @@ export interface DeviceSetupDto {
   cashReasons: { id: string; name: string; type: 'Income' | 'Expense' }[];
 }
 
-// ---- Dispositivo vinculado (fase 2) ----
+// ---- Paired device (phase 2) ----
 
-/** POST /dispositivo/vincular. The token is only delivered in this response. */
+/** POST /device/pair. The token is only delivered in this response. */
 export interface PairedDeviceDto {
   deviceId: string;
   deviceToken: string;
@@ -95,20 +95,20 @@ export interface PairedDeviceDto {
   cashRegisterName: string;
 }
 
-/** GET /dispositivo/usuarios: who has a PIN and a current role at the register's branch. */
+/** GET /device/users: who has a PIN and a current role at the register's branch. */
 export interface DeviceUserDto {
   userId: string;
   fullName: string;
 }
 
-// ---- Backoffice (fase 2) ----
+// ---- Backoffice (phase 2) ----
 
 /** Master data with ETag: `version` is the value for If-Match. */
 export interface Versioned {
   version: string;
 }
 
-/** GET /empresa */
+/** GET /company */
 export interface CompanyDto extends Versioned {
   id: string;
   legalName: string;
@@ -126,7 +126,7 @@ export interface CompanyDto extends Versioned {
   status: string;
 }
 
-/** PUT /empresa */
+/** PUT /company */
 export interface UpdateCompanyRequest {
   tradeName: string | null;
   email: string;
@@ -136,7 +136,7 @@ export interface UpdateCompanyRequest {
   timeZone: string | null;
 }
 
-/** GET /sucursales */
+/** GET /branches */
 export interface BranchDto extends Versioned {
   id: string;
   code: string;
@@ -150,7 +150,7 @@ export interface BranchDto extends Versioned {
 export interface CreateBranchRequest { code: string; name: string; address: string | null; cityCode: string | null; phone: string | null; }
 export interface UpdateBranchRequest { name: string; address: string | null; cityCode: string | null; phone: string | null; }
 
-/** GET /cajas */
+/** GET /cash-registers */
 export interface CashRegisterDto {
   id: string;
   branchId: string;
@@ -161,7 +161,7 @@ export interface CashRegisterDto {
 
 export interface CreateCashRegisterRequest { branchId: string; code: string; name: string; }
 
-/** GET /dispositivos */
+/** GET /devices */
 export interface DeviceDto {
   id: string;
   cashRegisterId: string;
@@ -171,7 +171,7 @@ export interface DeviceDto {
   createdAt: string;
 }
 
-/** POST /cajas/{id}/codigos-vinculacion: 8 characters, single use, 15 minutes. */
+/** POST /cash-registers/{id}/pairing-codes: 8 characters, single use, 15 minutes. */
 export interface PairingCodeDto {
   code: string;
   expiresAt: string;
@@ -190,7 +190,7 @@ export interface AssignmentDto {
   isCurrent: boolean;
 }
 
-/** GET /usuarios */
+/** GET /users */
 export interface UserDto extends Versioned {
   id: string;
   fullName: string;
@@ -208,7 +208,7 @@ export interface AssignmentInput {
   validTo?: string | null;
 }
 
-/** POST /usuarios: with an email, the user can sign in to the backoffice. */
+/** POST /users: with an email, the user can sign in to the backoffice. */
 export interface CreateUserRequest {
   fullName: string;
   email: string | null;
@@ -222,7 +222,7 @@ export interface CreatedUserDto {
   temporaryPassword: string | null;
 }
 
-/** PUT /usuarios/{id}: `pin` null = do not change it. */
+/** PUT /users/{id}: `pin` null = do not change it. */
 export interface UpdateUserRequest {
   fullName: string;
   isActive: boolean;
@@ -238,9 +238,9 @@ export interface RoleDto {
   permissions: string[];
 }
 
-// ---- Plataforma (fase 2) ----
+// ---- Platform (phase 2) ----
 
-/** GET /plataforma/empresas */
+/** GET /platform/companies */
 export interface PlatformCompanyDto {
   id: string;
   legalName: string;
@@ -251,7 +251,7 @@ export interface PlatformCompanyDto {
   createdAt: string;
 }
 
-/** POST /plataforma/empresas */
+/** POST /platform/companies */
 export interface CreateCompanyRequest {
   legalName: string;
   tradeName: string | null;
@@ -333,7 +333,7 @@ export interface UnitDto {
   allowsDecimals: boolean;
 }
 
-/** GET /productos?sucursalId=: the price in force and availability at that branch. */
+/** GET /products?branchId=: the price in force and availability at that branch. */
 export interface ProductDto extends Versioned {
   id: string;
   sku: string;
@@ -362,7 +362,7 @@ export interface ProductDto extends Versioned {
 
 export interface ProductPriceDto {
   id: string;
-  /** null = precio base. */
+  /** null = base price. */
   branchId: string | null;
   amount: number;
   includesTax: boolean;
@@ -420,7 +420,7 @@ export interface AuditLogDto {
   newValues: string | null;
 }
 
-// ---- Inventario (fase 4) ----
+// ---- Inventory (phase 4) ----
 
 export interface StockLocationDto {
   id: string;
@@ -439,7 +439,7 @@ export interface AdjustmentReasonDto {
   isActive: boolean;
 }
 
-/** GET /existencias: each product that tracks stock per location (0 if it has no movements). */
+/** GET /stock: each product that tracks stock per location (0 if it has no movements). */
 export interface StockRowDto {
   locationId: string;
   locationName: string;
@@ -486,7 +486,7 @@ export interface ReconciliationDto {
   differences: { locationId: string; locationName: string; productId: string; productName: string; onHand: number; expected: number; difference: number }[];
 }
 
-// ---- Cajas y turnos (fase 5) ----
+// ---- Registers and shifts (phase 5) ----
 
 export type CashSessionStatus = 'open' | 'closing' | 'closed';
 
@@ -525,7 +525,7 @@ export interface CashMovementDto {
   note: string | null;
 }
 
-/** GET /sesiones-caja/{id}/resumen: breakdown of the expected amount and payments that block the close (D-12). */
+/** GET /cash-sessions/{id}/summary: breakdown of the expected amount and payments that block the close (D-12). */
 export interface CashSessionSummaryDto {
   sessionId: string;
   openingAmount: number;
@@ -545,7 +545,7 @@ export interface CashReasonDto {
   isActive: boolean;
 }
 
-// ---- Pagos (fase 6) ----
+// ---- Payments (phase 6) ----
 
 export type PaymentMethodKind = 'cash' | 'gateway' | 'external_card' | 'transfer_manual';
 
@@ -675,7 +675,7 @@ export interface FiscalAttemptDto {
   occurredAt: string;
 }
 
-// ---- Ventas (fase 8) ----
+// ---- Sales (phase 8) ----
 
 /** Product ready to sell at the register: the price in force at the branch (with tax, D-07). */
 export interface PosProduct {
@@ -814,7 +814,7 @@ export interface SaleReturnLineInput {
   restock: boolean;
 }
 
-export interface SaleListItemV2 {
+export interface SaleListItem {
   id: string;
   number: number | null;
   branchId: string;

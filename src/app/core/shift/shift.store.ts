@@ -15,7 +15,7 @@ export interface OpenShift {
 
 /**
  * Cash session (shift) open at this device's register (US-5.2). It is remembered locally so as not to
- * ask for it on every screen; the source of truth is the server (GET /cajas/{id}/sesion-abierta), which
+ * ask for it on every screen; the source of truth is the server (GET /cash-registers/{id}/open-session), which
  * allows cashier handover: whoever signs in resumes the session that is already open.
  */
 @Injectable({ providedIn: 'root' })
@@ -42,7 +42,7 @@ export class ShiftStore {
     }
   }
 
-  /** Closes with the counted cash; 422 PAGO_PENDIENTE if unresolved payments remain (D-12). */
+  /** Closes with the counted cash; 422 PAYMENT_PENDING if unresolved payments remain (D-12). */
   async close(countedCash: number, notes: string | null, idempotencyKey: string): Promise<CashSessionDto> {
     const closed = await this.api.closeSession(this._shift()!.id, countedCash, notes, idempotencyKey);
     this.forget();

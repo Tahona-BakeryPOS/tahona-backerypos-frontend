@@ -21,8 +21,8 @@ test.afterAll(async () => {
   await page.close();
 });
 
-test('vincula la caja y entra con el PIN del cajero', async () => {
-  await page.goto('/vincular');
+test('pairs the register and signs in with the cashier PIN', async () => {
+  await page.goto('/pair-device');
   await page.getByLabel('Código de vinculación').fill(s.pairingCode);
   await page.getByLabel('Nombre de este equipo').fill('Equipo E2E');
   await page.getByRole('button', { name: 'Vincular' }).click();
@@ -32,7 +32,7 @@ test('vincula la caja y entra con el PIN del cajero', async () => {
   await expect(page.getByLabel('Efectivo inicial')).toBeVisible();
 });
 
-test('abre la caja con efectivo inicial', async () => {
+test('opens the cash session with opening cash', async () => {
   await page.getByLabel('Efectivo inicial').fill(String(OPENING));
   await page.getByRole('button', { name: 'Abrir caja' }).click();
   await expect(page.getByRole('textbox', { name: 'Buscar producto' })).toBeVisible();
@@ -43,7 +43,7 @@ test('vende en efectivo exacto dos veces', async () => {
   await sell(2);
 });
 
-test('anula la primera venta con autorización del supervisor', async () => {
+test('voids the first sale with the supervisor authorization', async () => {
   await page.getByRole('link', { name: 'Ventas del turno' }).click();
   const row = page.getByRole('row').filter({ hasText: copDigits(s.product.price) }).filter({ hasText: 'confirmada' }).first();
   await row.getByRole('button', { name: 'Anular' }).click();
@@ -53,7 +53,7 @@ test('anula la primera venta con autorización del supervisor', async () => {
   await expect(page.getByRole('row').filter({ hasText: 'anulada' })).toHaveCount(1);
 });
 
-test('devuelve una unidad de la segunda venta', async () => {
+test('returns one unit of the second sale', async () => {
   const row = page.getByRole('row').filter({ hasText: copDigits(s.product.price * 2) }).filter({ hasText: 'confirmada' }).first();
   await row.getByRole('button', { name: 'Devolver' }).click();
 
@@ -64,7 +64,7 @@ test('devuelve una unidad de la segunda venta', async () => {
   await expect(row).toContainText(copDigits(s.product.price));
 });
 
-test('cierra la caja sin diferencia', async () => {
+test('closes the cash session with no difference', async () => {
   // Expected = opening + 2 sales − void − return of one unit.
   const expected = OPENING + s.product.price * 3 - s.product.price - s.product.price;
   await page.getByRole('button', { name: 'Cerrar caja' }).click();
@@ -74,15 +74,15 @@ test('cierra la caja sin diferencia', async () => {
   await expect(page.getByRole('dialog')).toContainText(copDigits(expected));
 });
 
-test('el informe del backoffice refleja ventas, anulación y devolución', async () => {
-  await page.goto('/backoffice/ingresar');
+test('the backoffice report reflects sales, void and return', async () => {
+  await page.goto('/backoffice/sign-in');
   await page.getByLabel('Correo').fill(s.ownerEmail);
   await page.getByLabel('Contraseña').fill(s.ownerPassword);
   await page.getByRole('button', { name: /Entrar|Ingresar/ }).click();
   const choose = page.getByRole('button', { name: /./ }).filter({ hasNotText: 'Administración de la plataforma' });
   if (await page.getByRole('heading', { name: '¿Dónde vas a trabajar?' }).isVisible().catch(() => false)) await choose.first().click();
 
-  await page.goto('/backoffice/informes/ventas');
+  await page.goto('/backoffice/reports/sales');
   await page.getByLabel('Sucursal').selectOption({ label: s.branchName });
   const kpi = (label: string) => page.locator('.kpi').filter({ hasText: label });
   await expect(kpi('Vendido').first()).toContainText(copDigits(s.product.price * 2));

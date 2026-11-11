@@ -24,7 +24,7 @@ const PAGE_SIZE = 50;
   styles: BO_PAGE_STYLES,
   template: `
     <div class="head">
-      <div><h1>Existencias</h1><p>El saldo no se edita: cambia con la existencia inicial, los ajustes, el conteo físico y, desde la fase 8, las ventas.</p></div>
+      <div><h1>Existencias</h1><p>El saldo no se edita: cambia con la existencia inicial, los ajustes, el conteo físico y las ventas.</p></div>
       <div class="row">
         <button type="button" (click)="reconcile()" [disabled]="!branchId() || action.busy()">Verificar saldos</button>
         @if (canAdjust) { <button type="button" (click)="openLocation()" [disabled]="!branchId()">＋ Ubicación</button> }

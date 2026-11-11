@@ -103,7 +103,7 @@ export class CloseShiftDialog {
       const err = toApiError(e);
       this.error.set(err.message);
       // Another device may have closed or recorded payments: the summary is refreshed.
-      if (err.code === 'PAGO_PENDIENTE' || err.code === 'CAJA_CERRADA') void this.cash.load();
+      if (err.code === 'PAYMENT_PENDING' || err.code === 'CASH_SESSION_CLOSED') void this.cash.load();
     } finally {
       this.busy.set(false);
     }

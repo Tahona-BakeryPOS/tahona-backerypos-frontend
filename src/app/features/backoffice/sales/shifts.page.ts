@@ -9,7 +9,7 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
 
 /**
  * Ventas y caja → Shifts and Closings (US-5.4). The same view with two modes (route data):
- * "turnos" shows all sessions; "cierres" only the closed ones, with expected, counted and difference.
+ * "shifts" shows all sessions; "closings" only the closed ones, with expected, counted and difference.
  */
 @Component({
   selector: 'app-shifts-page',
@@ -65,9 +65,9 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
 })
 export class ShiftsPage {
   private readonly bo = inject(BackofficeApi);
-  /** Route data (withComponentInputBinding): 'cierres' shows only closed sessions. */
-  readonly mode = input<'turnos' | 'cierres'>('turnos');
-  protected readonly closedOnly = computed(() => this.mode() === 'cierres');
+  /** Route data (withComponentInputBinding): 'closings' shows only closed sessions. */
+  readonly mode = input<'shifts' | 'closings'>('shifts');
+  protected readonly closedOnly = computed(() => this.mode() === 'closings');
   protected readonly from = signal(daysAgo(6));
   protected readonly to = signal(daysAgo(0));
   protected readonly branchId = signal('');

@@ -34,7 +34,7 @@ export function nitCheckDigit(nit: string): number | null {
 /**
  * Plataforma → Companies (D-09): the platform administrator onboards companies and their
  * owner. The response carries the owner's one-time password, which is shown only
- * once; that is why onboarding does not use Idempotency-Key (I-14) and a retry collides with NIT_DUPLICADO.
+ * once; that is why onboarding does not use Idempotency-Key (I-14) and a retry collides with DUPLICATE_NIT.
  */
 @Component({
   selector: 'app-platform-companies-page',

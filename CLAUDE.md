@@ -9,8 +9,9 @@ Backend: <https://github.com/Tahona-BakeryPOS/tahona-backerypos-backend> (design
 
 ## Language
 
-Everything technical is in English: code identifiers, comments, commit messages and documentation. Text that users see in
-the screens (labels, messages, toasts) is Spanish, because the product is for Colombian bakeries; keep it as is.
+Everything technical is in English: code identifiers, comments, browser routes (`/pair-device`, `/backoffice/sign-in`, `sales/payments`), feature
+folders, commit messages and documentation. Text that users see in the screens (labels, messages, toasts) is Spanish, because the
+product is for Colombian bakeries; keep it as is.
 
 ## API source of truth
 

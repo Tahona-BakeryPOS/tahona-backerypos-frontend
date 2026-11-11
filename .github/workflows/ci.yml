@@ -1,6 +1,6 @@
 name: frontend-ci
 
-# CI independiente del backend: este repo solo contiene la PWA (Angular).
+# CI independent of the backend: this repo only contains the PWA (Angular).
 on:
   push:
     branches: [main]
@@ -18,10 +18,10 @@ jobs:
       - run: npm ci
       - run: npx ng test --watch=false
       - run: npx ng build --configuration production
-      # Las E2E corren contra staging (frontend/e2e/README.md); en CI solo se comprueba que compilan.
+      # E2E tests run against staging (frontend/e2e/README.md); in CI it is only checked that they compile.
       - run: npm run e2e:typecheck
       - run: docker build -t bakerypos-web:${{ github.sha }} .
-      - name: El compose de despliegue y el Caddyfile son válidos (valores ficticios, sin secretos)
+      - name: The deployment compose and the Caddyfile are valid (dummy values, no secrets)
         working-directory: deploy
         env:
           ENVIRONMENT: ci

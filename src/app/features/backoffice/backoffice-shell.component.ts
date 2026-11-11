@@ -69,9 +69,9 @@ import { BACKOFFICE_MENU } from './backoffice-menu';
       <div class="foot">
         <span><b>{{ session.user()?.name }}</b> · {{ session.roleLabel() }}</span>
         <span class="muted">{{ session.companyName() ?? 'Administración de la plataforma' }}</span>
-        @if (canSwitch()) { <a routerLink="/backoffice/ingresar" [queryParams]="{ paso: 'empresa' }">Cambiar de empresa</a> }
+        @if (canSwitch()) { <a routerLink="/backoffice/sign-in" [queryParams]="{ step: 'company' }">Cambiar de empresa</a> }
         @if (device.isPaired()) {
-          <a [routerLink]="shifts.isOpen() ? '/pos' : '/turno'">← Ir a la caja</a>
+          <a [routerLink]="shifts.isOpen() ? '/pos' : '/shift'">← Ir a la caja</a>
         }
         <button type="button" class="sm" (click)="logout()">Cerrar sesión</button>
       </div>
@@ -112,6 +112,6 @@ export class BackofficeShellComponent {
     const refresh = this.session.refreshToken();
     if (refresh) void this.api.logout(refresh).catch(() => undefined);
     this.session.end();
-    void this.router.navigate(['/backoffice/ingresar']);
+    void this.router.navigate(['/backoffice/sign-in']);
   }
 }

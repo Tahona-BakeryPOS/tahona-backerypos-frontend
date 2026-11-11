@@ -1,7 +1,7 @@
-# Caddy: HTTPS automático (Let's Encrypt), PWA estática y proxy de /api hacia el API.
-# DOMAIN, ACME_EMAIL y API_UPSTREAM llegan del .env (deploy/docker-compose.yml).
-# API_UPSTREAM es la URL pública del API, p. ej. https://api.tupanaderia.co. Como el navegador solo habla con DOMAIN,
-# las llamadas a /api/v1 son del mismo origen y no necesitan CORS.
+# Caddy: automatic HTTPS (Let's Encrypt), static PWA and a proxy of /api to the API.
+# DOMAIN, ACME_EMAIL and API_UPSTREAM come from the .env (deploy/docker-compose.yml).
+# API_UPSTREAM is the API's public URL, e.g. https://api.yourbakery.co. Since the browser only talks to DOMAIN,
+# the calls to /api/v1 are same-origin and need no CORS.
 {
 	email {$ACME_EMAIL}
 }
@@ -18,19 +18,19 @@
 		-Server
 	}
 
-	# API (el backend se despliega por su lado).
+	# API (the backend is deployed on its own).
 	handle /api/* {
 		reverse_proxy {$API_UPSTREAM} {
 			header_up Host {upstream_hostport}
 		}
 	}
 
-	# Salud del frontend para el monitoreo externo.
+	# Frontend health check for external monitoring.
 	handle /health {
 		respond "OK" 200
 	}
 
-	# PWA: el index y los archivos del service worker nunca se cachean, para que una versión nueva llegue a las cajas.
+	# PWA: the index and the service-worker files are never cached, so a new version reaches the registers.
 	handle {
 		root * /srv
 		@nocache path / /index.html /ngsw.json /ngsw-worker.js /safety-worker.js /manifest.webmanifest

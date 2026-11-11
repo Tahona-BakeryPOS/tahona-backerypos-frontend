@@ -33,9 +33,9 @@ import { CloseShiftDialog } from './cash/close-shift.dialog';
         <span class="muted">{{ session.user()?.name }} · {{ session.roleLabel() }}</span>
       </div>
       <nav aria-label="Secciones del punto de venta">
-        <a routerLink="venta" routerLinkActive="active">Venta</a>
-        <a routerLink="ventas" routerLinkActive="active">Ventas del turno</a>
-        <a routerLink="caja" routerLinkActive="active">Caja</a>
+        <a routerLink="sell" routerLinkActive="active">Venta</a>
+        <a routerLink="shift-sales" routerLinkActive="active">Ventas del turno</a>
+        <a routerLink="cash" routerLinkActive="active">Caja</a>
         <button type="button" (click)="closing.set(true)">Cerrar caja</button>
         @if (session.canAny(backofficePerms)) { <a routerLink="/backoffice">Backoffice</a> }
       </nav>

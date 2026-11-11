@@ -1,6 +1,6 @@
 /**
  * Sale money rules: they replicate the backend's SaleLine.Create to show the total while the
- * cashier builds the sale. The total that is charged is always the one the server returns (POST /ventas).
+ * cashier builds the sale. The total that is charged is always the one the server returns (POST /sales).
  * With a price that includes tax (D-07): gross = quantity × price − discount; base = gross / (1 + rate);
  * tax = gross − base. If it does not include it: base = gross; tax = base × rate.
  * Pure functions: they are tested without Angular.

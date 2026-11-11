@@ -3,7 +3,7 @@ import { ApiClient, newIdempotencyKey } from './api-client';
 import {
   AuthSessionDto, CashMovementDto, CashReasonDto, CashSessionDto, CashSessionSummaryDto, DeviceUserDto,
   LoginPasswordRequest, LoginPinRequest, PagedResult, PairedDeviceDto, PaymentMethodDto, PosProduct, ProductDto, SaleDto, SaleLineInput,
-  SaleListItemV2, SaleReturnLineInput,
+  SaleListItem, SaleReturnLineInput,
 } from './api.models';
 
 /** Header with the opaque token of the paired device (PIN login and the cashier list). */
@@ -21,16 +21,16 @@ const device = (token: string) => ({ headers: { [DEVICE_TOKEN_HEADER]: token } }
 export class PosApi {
   private readonly api = inject(ApiClient);
 
-  // Dispositivo
+  // Device
   pairDevice(code: string, deviceName: string): Promise<PairedDeviceDto> {
-    return this.api.post('/dispositivo/vincular', { code, deviceName });
+    return this.api.post('/device/pair', { code, deviceName });
   }
 
   deviceUsers(deviceToken: string): Promise<DeviceUserDto[]> {
-    return this.api.get('/dispositivo/usuarios', undefined, device(deviceToken));
+    return this.api.get('/device/users', undefined, device(deviceToken));
   }
 
-  // Sesiones
+  // Sessions
   loginPin(body: LoginPinRequest, deviceToken: string): Promise<AuthSessionDto> {
     return this.api.post('/auth/login-pin', body, device(deviceToken));
   }
@@ -45,7 +45,7 @@ export class PosApi {
   }
 
   changePassword(currentPassword: string, newPassword: string): Promise<AuthSessionDto> {
-    return this.api.post('/auth/cambiar-contrasena', { currentPassword, newPassword });
+    return this.api.post('/auth/change-password', { currentPassword, newPassword });
   }
 
   logout(refreshToken: string): Promise<void> {
@@ -54,43 +54,43 @@ export class PosApi {
 
   // Cash sessions (phase 5)
   openSession(cashRegisterId: string, openingAmount: number, idempotencyKey = newIdempotencyKey()): Promise<CashSessionDto> {
-    return this.api.post(`/cajas/${cashRegisterId}/sesiones`, { openingAmount }, { idempotencyKey });
+    return this.api.post(`/cash-registers/${cashRegisterId}/sessions`, { openingAmount }, { idempotencyKey });
   }
 
-  /** The register's open session; ApiError NO_ENCONTRADO (404) if there is none. */
+  /** The register's open session; ApiError NOT_FOUND (404) if there is none. */
   openSessionOf(cashRegisterId: string): Promise<CashSessionDto> {
-    return this.api.get(`/cajas/${cashRegisterId}/sesion-abierta`);
+    return this.api.get(`/cash-registers/${cashRegisterId}/open-session`);
   }
 
   sessionSummary(sessionId: string): Promise<CashSessionSummaryDto> {
-    return this.api.get(`/sesiones-caja/${sessionId}/resumen`);
+    return this.api.get(`/cash-sessions/${sessionId}/summary`);
   }
 
-  /** Close blocked with 422 PAGO_PENDIENTE if there are unresolved payments (D-12). */
+  /** Close blocked with 422 PAYMENT_PENDING if there are unresolved payments (D-12). */
   closeSession(sessionId: string, countedAmount: number, notes: string | null, idempotencyKey = newIdempotencyKey()): Promise<CashSessionDto> {
-    return this.api.post(`/sesiones-caja/${sessionId}/cierre`, { countedAmount, notes }, { idempotencyKey });
+    return this.api.post(`/cash-sessions/${sessionId}/close`, { countedAmount, notes }, { idempotencyKey });
   }
 
   /** The withdrawal is sent with their token by the authorizing supervisor (`asToken`), with the cash.withdrawal permission. */
   registerMovement(sessionId: string, body: { kind: 'income' | 'expense'; amount: number; reasonId: string; note: string | null },
     idempotencyKey: string, asToken?: string): Promise<CashMovementDto> {
-    return this.api.post(`/sesiones-caja/${sessionId}/movimientos`, body, { idempotencyKey, asToken });
+    return this.api.post(`/cash-sessions/${sessionId}/movements`, body, { idempotencyKey, asToken });
   }
 
   movements(sessionId: string): Promise<CashMovementDto[]> {
-    return this.api.get(`/sesiones-caja/${sessionId}/movimientos`);
+    return this.api.get(`/cash-sessions/${sessionId}/movements`);
   }
 
   cashReasons(): Promise<CashReasonDto[]> {
-    return this.api.get('/motivos-caja');
+    return this.api.get('/cash-reasons');
   }
 
-  // Ventas (fase 8)
+  // Sales (phase 8)
   /** Products sellable at the branch (active, available and with a price), all pages. */
   async posProducts(branchId: string): Promise<PosProduct[]> {
     const all: PosProduct[] = [];
     for (let page = 1; ; page++) {
-      const r = await this.api.get<PagedResult<ProductDto>>('/productos', { sucursalId: branchId, page, pageSize: 200 });
+      const r = await this.api.get<PagedResult<ProductDto>>('/products', { branchId: branchId, page, pageSize: 200 });
       for (const p of r.items) {
         if (p.isActive && p.isAvailable && p.price !== null) {
           all.push({ id: p.id, sku: p.sku, name: p.name, category: p.categoryName || 'Sin categoría', price: p.price,
@@ -102,50 +102,50 @@ export class PosApi {
   }
 
   paymentMethods(): Promise<PaymentMethodDto[]> {
-    return this.api.get('/medios-pago');
+    return this.api.get('/payment-methods');
   }
 
   createSale(body: { cashRegisterId: string; customerIdentification: string | null; lines: SaleLineInput[] }, idempotencyKey: string): Promise<SaleDto> {
-    return this.api.post('/ventas', body, { idempotencyKey });
+    return this.api.post('/sales', body, { idempotencyKey });
   }
 
   sale(id: string): Promise<SaleDto> {
-    return this.api.get(`/ventas/${id}`);
+    return this.api.get(`/sales/${id}`);
   }
 
   setCustomer(id: string, customerIdentification: string | null): Promise<SaleDto> {
-    return this.api.put(`/ventas/${id}/cliente`, { customerIdentification });
+    return this.api.put(`/sales/${id}/customer`, { customerIdentification });
   }
 
   /** Sent by the authorizing supervisor (their token): selling without stock on "block" products (D-06). */
   authorizeStock(id: string, authorizerToken: string): Promise<SaleDto> {
-    return this.api.post(`/ventas/${id}/autorizar-existencias`, {}, { asToken: authorizerToken });
+    return this.api.post(`/sales/${id}/authorize-stock`, {}, { asToken: authorizerToken });
   }
 
   addPayment(id: string, body: { paymentMethodId: string; amount: number; amountTendered: number | null; reference: string | null }, idempotencyKey: string): Promise<SaleDto> {
-    return this.api.post(`/ventas/${id}/pagos`, body, { idempotencyKey });
+    return this.api.post(`/sales/${id}/payments`, body, { idempotencyKey });
   }
 
   cancelSale(id: string): Promise<SaleDto> {
-    return this.api.post(`/ventas/${id}/cancelar`);
+    return this.api.post(`/sales/${id}/cancel`);
   }
 
-  sessionSales(cashSessionId: string): Promise<PagedResult<SaleListItemV2>> {
-    return this.api.get('/ventas', { sesionCajaId: cashSessionId, page: 1, pageSize: 200 });
+  sessionSales(cashSessionId: string): Promise<PagedResult<SaleListItem>> {
+    return this.api.get('/sales', { cashSessionId: cashSessionId, page: 1, pageSize: 200 });
   }
 
   /** D-11: sent by whoever authorizes (sales.void) with their token. */
   voidSale(id: string, reason: string, authorizerToken?: string): Promise<SaleDto> {
-    return this.api.post(`/ventas/${id}/anulacion`, { reason }, authorizerToken ? { asToken: authorizerToken } : {});
+    return this.api.post(`/sales/${id}/void`, { reason }, authorizerToken ? { asToken: authorizerToken } : {});
   }
 
   /** US-9.2: sent by whoever authorizes (returns.approve) with their token; the cash comes out of this register. */
   returnSale(id: string, body: { cashRegisterId: string; reason: string; lines: SaleReturnLineInput[] }, idempotencyKey: string,
     authorizerToken?: string): Promise<SaleDto> {
-    return this.api.post(`/ventas/${id}/devoluciones`, body, authorizerToken ? { asToken: authorizerToken, idempotencyKey } : { idempotencyKey });
+    return this.api.post(`/sales/${id}/returns`, body, authorizerToken ? { asToken: authorizerToken, idempotencyKey } : { idempotencyKey });
   }
 
-  saleByNumber(number: number): Promise<PagedResult<SaleListItemV2>> {
-    return this.api.get('/ventas', { numero: number, page: 1, pageSize: 1 });
+  saleByNumber(number: number): Promise<PagedResult<SaleListItem>> {
+    return this.api.get('/sales', { number: number, page: 1, pageSize: 1 });
   }
 }

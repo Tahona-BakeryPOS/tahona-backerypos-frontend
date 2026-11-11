@@ -214,7 +214,7 @@ export class PaymentDialog {
     } catch (e) {
       const err = toApiError(e);
       if (!err.isNetwork) this.renewKey();
-      if (err.code === 'EXISTENCIAS_INSUFICIENTES') this.needsStockAuth.set(true);
+      if (err.code === 'INSUFFICIENT_STOCK') this.needsStockAuth.set(true);
       this.error.set(err.isNetwork ? 'Sin conexión: revisa la red e intenta de nuevo (no se cobra dos veces).' : err.message);
     } finally {
       this.busy.set(false);

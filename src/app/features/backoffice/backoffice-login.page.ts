@@ -102,9 +102,9 @@ export class BackofficeLoginPage {
   );
 
   constructor() {
-    // ?paso=empresa: switch company from the menu. Without it, it resumes a half-finished sign-in.
+    // ?step=company: switch company from the menu. Without it, it resumes a half-finished sign-in.
     const u = this.session.user();
-    const switching = inject(ActivatedRoute).snapshot.queryParamMap.get('paso') === 'empresa';
+    const switching = inject(ActivatedRoute).snapshot.queryParamMap.get('step') === 'company';
     if (u?.kind === 'backoffice') {
       if (u.mustChangePassword) this.step.set('password');
       else if (switching || (!u.companyId && this.needsCompany(u))) this.step.set('company');
@@ -115,7 +115,7 @@ export class BackofficeLoginPage {
     if (this.form.invalid) return this.error.set('Escribe un correo válido y la contraseña.');
     await this.run(async () => this.proceed(await this.api.loginPassword(this.form.getRawValue())), (e) => {
       const err = toApiError(e);
-      // 423 USUARIO_BLOQUEADO and 429 bring their own message with the wait.
+      // 423 USER_LOCKED and 429 bring their own message with the wait.
       return err.status === 401 ? 'Correo o contraseña incorrectos.' : err.message;
     });
     this.form.controls.password.reset();

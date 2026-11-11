@@ -127,7 +127,7 @@ export class SalesPage {
   protected readonly branches = resource({ loader: () => this.bo.branches() });
   protected readonly sales = resource({
     params: () => ({ from: this.from(), to: this.to(), branchId: this.branchId() || null, status: this.status() || null, page: this.page() }),
-    loader: ({ params: p }) => this.bo.salesV2({ from: p.from, to: p.to, branchId: p.branchId }, p.status, p.page, PAGE_SIZE),
+    loader: ({ params: p }) => this.bo.listSales({ from: p.from, to: p.to, branchId: p.branchId }, p.status, p.page, PAGE_SIZE),
   });
 
   protected label(s: string): string {
@@ -139,7 +139,7 @@ export class SalesPage {
   }
 
   protected async open(id: string): Promise<void> {
-    const d = await this.action.run(() => this.bo.saleV2(id));
+    const d = await this.action.run(() => this.bo.getSale(id));
     if (d) this.detail.set(d);
   }
 

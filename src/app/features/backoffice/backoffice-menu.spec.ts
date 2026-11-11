@@ -5,30 +5,30 @@ import { BACKOFFICE_MENU } from './backoffice-menu';
 describe('BACKOFFICE_MENU', () => {
   const boRoutes = routes.find((r) => r.path === 'backoffice')!.children!.map((r) => r.path);
 
-  it('tiene la plataforma y los 8 módulos del backoffice', () => {
+  it('has the platform and the 8 backoffice modules', () => {
     expect(BACKOFFICE_MENU.map((g) => g.label)).toEqual([
       'Plataforma', 'Panel de control', 'Mi negocio', 'Productos e inventario', 'Producción',
       'Abastecimiento', 'Ventas y caja', 'Informes', 'Configuración',
     ]);
   });
 
-  it('cada ítem con ruta tiene su página registrada', () => {
+  it('every item with a route has its page registered', () => {
     const missing = BACKOFFICE_MENU.flatMap((g) => g.items).filter((i) => i.route && !boRoutes.includes(i.route));
     expect(missing).toEqual([]);
   });
 
-  it('los ítems con ruta declaran el permiso que exige su ruta', () => {
+  it('items with a route declare the permission their route requires', () => {
     expect(BACKOFFICE_MENU.flatMap((g) => g.items).filter((i) => i.route && !i.perm)).toEqual([]);
   });
 
-  it('solo las pantallas de las fases 2 a 9 tienen ruta', () => {
+  it('only the screens that already work have a route', () => {
     expect(BACKOFFICE_MENU.flatMap((g) => g.items).filter((i) => i.route).map((i) => i.route)).toEqual([
-      'plataforma/empresas', 'panel', 'negocio/empresa', 'negocio/sucursales', 'negocio/puntos-venta',
-      'productos/catalogo', 'productos/categorias', 'productos/unidades',
-      'inventario/existencias', 'inventario/movimientos', 'inventario/ajustes', 'ventas/ventas', 'ventas/turnos', 'ventas/cierres',
-      'ventas/pagos', 'ventas/devoluciones', 'ventas/documentos-fiscales', 'ventas/medios-pago', 'informes/ventas', 'informes/auditoria',
-      'configuracion/usuarios', 'configuracion/roles', 'configuracion/impuestos', 'configuracion/facturacion',
-      'configuracion/numeraciones', 'configuracion/integraciones', 'configuracion/historial',
+      'platform/companies', 'dashboard', 'business/company', 'business/branches', 'business/points-of-sale',
+      'products/catalog', 'products/categories', 'products/units',
+      'inventory/stock', 'inventory/movements', 'inventory/adjustments', 'sales/sales', 'sales/shifts', 'sales/closings',
+      'sales/payments', 'sales/returns', 'sales/fiscal-documents', 'sales/payment-methods', 'reports/sales', 'reports/audit',
+      'settings/users', 'settings/roles', 'settings/taxes', 'settings/invoicing',
+      'settings/numberings', 'settings/integrations', 'settings/history',
     ]);
   });
 });

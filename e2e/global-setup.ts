@@ -27,9 +27,9 @@ export default async function globalSetup(): Promise<void> {
   }
 
   const run = Date.now().toString(36).toUpperCase().slice(-6);
-  const branch = await api.post<{ id: string; name: string }>('/sucursales',
+  const branch = await api.post<{ id: string; name: string }>('/branches',
     { code: `E2E${run}`, name: `E2E ${run}`, address: null, cityCode: null, phone: null }, true);
-  const register = await api.post<{ id: string; name: string }>('/cajas',
+  const register = await api.post<{ id: string; name: string }>('/cash-registers',
     { branchId: branch.id, code: `C${run}`, name: `Caja E2E ${run}` }, true);
 
   const roles = await api.get<{ id: string; code: string; permissions: string[] }[]>('/roles');
@@ -40,24 +40,24 @@ export default async function globalSetup(): Promise<void> {
 
   const cashier = { name: `Cajero ${run}`, pin: pin() };
   const supervisor = { name: `Supervisor ${run}`, pin: pin() };
-  await api.post('/usuarios', { fullName: cashier.name, email: null, pin: cashier.pin, assignments: [{ roleId: cashierRole.id, branchId: branch.id }] });
-  await api.post('/usuarios', { fullName: supervisor.name, email: null, pin: supervisor.pin, assignments: [{ roleId: supervisorRole.id, branchId: branch.id }] });
+  await api.post('/users', { fullName: cashier.name, email: null, pin: cashier.pin, assignments: [{ roleId: cashierRole.id, branchId: branch.id }] });
+  await api.post('/users', { fullName: supervisor.name, email: null, pin: supervisor.pin, assignments: [{ roleId: supervisorRole.id, branchId: branch.id }] });
 
   const [categories, units, taxes] = await Promise.all([
-    api.get<{ id: string; isActive?: boolean }[]>('/categorias'),
-    api.get<{ id: string; code: string }[]>('/unidades'),
-    api.get<{ id: string; rate: number; isActive: boolean }[]>('/impuestos'),
+    api.get<{ id: string; isActive?: boolean }[]>('/categories'),
+    api.get<{ id: string; code: string }[]>('/units'),
+    api.get<{ id: string; rate: number; isActive: boolean }[]>('/taxes'),
   ]);
   const unit = units.find((u) => u.code === 'UND');
   const tax = taxes.find((t) => t.isActive && t.rate === 19) ?? taxes.find((t) => t.isActive);
   if (!categories[0] || !unit || !tax) throw new Error('La empresa de pruebas necesita categoría, unidad UND e impuesto activos.');
   const product = { name: `Pan E2E ${run}`, price: 2_500 };
-  await api.post('/productos', {
+  await api.post('/products', {
     sku: `E2E-${run}`, name: product.name, categoryId: categories[0].id, unitId: unit.id, taxId: tax.id, barcode: null,
     trackStock: false, negativeStockPolicy: 'allow', basePrice: product.price,
   }, true);
 
-  const pairing = await api.post<{ code: string }>(`/cajas/${register.id}/codigos-vinculacion`, {});
+  const pairing = await api.post<{ code: string }>(`/cash-registers/${register.id}/pairing-codes`, {});
 
   const state: E2EState = {
     apiUrl, ownerEmail: email, ownerPassword: password, branchName: branch.name, cashRegisterName: register.name,

@@ -82,7 +82,7 @@ export class OpenShiftPage {
       await this.enterPos();
     } catch (e) {
       const err = toApiError(e);
-      if (err.code === 'CAJA_YA_ABIERTA') this.existing.set(await this.shifts.resume().catch(() => null));
+      if (err.code === 'CASH_SESSION_ALREADY_OPEN') this.existing.set(await this.shifts.resume().catch(() => null));
       else this.error.set(err.message);
     } finally {
       this.busy.set(false);

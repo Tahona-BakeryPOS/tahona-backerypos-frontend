@@ -1,8 +1,8 @@
-# Despliegue del frontend (PWA) en un VPS: un solo contenedor con Caddy (HTTPS + PWA + proxy de /api hacia el API).
-# Un ambiente por VPS, con su propio .env (no versionado, ver .env.deploy.example). Uso:
+# Frontend (PWA) deployment on a VPS: a single container with Caddy (HTTPS + PWA + /api proxy to the API).
+# One environment per VPS, with its own .env (not versioned, see .env.deploy.example). Usage:
 #   ./scripts/deploy.sh .env.production
-# Nada sensible en este archivo: todo sale del .env.
-name: bakerypos-web-${ENVIRONMENT:?Define ENVIRONMENT (staging o production) en el .env}
+# Nothing sensitive in this file: everything comes from the .env.
+name: bakerypos-web-${ENVIRONMENT:?Define ENVIRONMENT (staging or production) in the .env}
 
 services:
   web:
@@ -15,15 +15,15 @@ services:
       - "443:443"
       - "443:443/udp"
     environment:
-      DOMAIN: ${DOMAIN:?Define DOMAIN (dominio público del frontend) en el .env}
+      DOMAIN: ${DOMAIN:?Define DOMAIN (the frontend's public domain) in the .env}
       ACME_EMAIL: ${ACME_EMAIL:?}
-      API_UPSTREAM: ${API_UPSTREAM:?Define API_UPSTREAM (URL pública del API, p. ej. https://api.tupanaderia.co) en el .env}
+      API_UPSTREAM: ${API_UPSTREAM:?Define API_UPSTREAM (the API's public URL, e.g. https://api.yourbakery.co) in the .env}
     volumes:
       - caddy_data:/data
       - caddy_config:/config
 
 volumes:
-  # Nombres fijos por ambiente: conservan los certificados de Let's Encrypt entre despliegues.
+  # Fixed names per environment: they keep the Let's Encrypt certificates between deployments.
   caddy_data:
     name: bakerypos_web_${ENVIRONMENT}_caddy_data
   caddy_config:

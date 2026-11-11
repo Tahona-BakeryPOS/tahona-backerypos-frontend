@@ -18,12 +18,12 @@ describe('DeviceConfigStore', () => {
     TestBed.resetTestingModule();
   });
 
-  it('arma la configuración desde la respuesta de vinculación', () => {
+  it('builds the configuration from the pairing response', () => {
     const c = DeviceConfigStore.fromPairing(pairing, ' c2 ');
     expect(c).toMatchObject({ deviceToken: 'token', companyId: 'co-1', branchId: 'br-1', cashRegisterId: 'reg-1', ticketPrefix: 'C2' });
   });
 
-  it('queda vinculado con el token y la caja', () => {
+  it('is paired with the token and the register', () => {
     const store = TestBed.inject(DeviceConfigStore);
     expect(store.isPaired()).toBe(false);
     store.save(DeviceConfigStore.fromPairing(pairing, 'C1'));
@@ -32,7 +32,7 @@ describe('DeviceConfigStore', () => {
     expect(store.isPaired()).toBe(false);
   });
 
-  it('una configuración de la v1 (sin empresa) obliga a vincular de nuevo', () => {
+  it('a configuration from the previous system (no company) forces pairing again', () => {
     localStorage.setItem('bakerypos.device', JSON.stringify({ deviceToken: 't', branchId: 'b', cashRegisterId: 'r', paymentMethods: [] }));
     expect(TestBed.inject(DeviceConfigStore).config()).toBeNull();
   });

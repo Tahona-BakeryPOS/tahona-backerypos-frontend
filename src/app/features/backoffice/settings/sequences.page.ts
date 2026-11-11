@@ -17,7 +17,7 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
     <div class="head"><div><h1>Numeraciones</h1><p>La numeración y las resoluciones DIAN las administra Siigo. Para cambiarlas usa Siigo Nube; aquí se consultan.</p></div></div>
     @if (catalogs.error(); as e) {
       <p class="err">{{ msg(e) }}</p>
-      <p class="small">Configura primero la conexión en <a routerLink="/backoffice/configuracion/facturacion">Facturación electrónica</a>.</p>
+      <p class="small">Configura primero la conexión en <a routerLink="/backoffice/settings/invoicing">Facturación electrónica</a>.</p>
     }
     @for (group of groups(); track group.title) {
       <h2 style="font-size:16px;margin-top:12px">{{ group.title }}</h2>

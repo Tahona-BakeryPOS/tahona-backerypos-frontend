@@ -52,7 +52,7 @@ const STATUS: Record<string, string> = {
                 <div class="small muted">{{ d.attempts }} intento(s)</div></td>
               <td>@if (d.cufe) { <div class="cufe">{{ d.cufe }}</div> } @else if (d.errors) { <div class="small err">{{ d.errors }}</div> } @else { — }</td>
               <td style="white-space:nowrap">
-                @if (d.status === 'accepted') { <a class="sm" [href]="'/api/v1/documentos-fiscales/' + d.id + '/pdf'" (click)="$event.preventDefault(); pdf(d)">PDF</a> }
+                @if (d.status === 'accepted') { <a class="sm" [href]="'/api/v1/fiscal-documents/' + d.id + '/pdf'" (click)="$event.preventDefault(); pdf(d)">PDF</a> }
                 @if (canManage) {
                   <button type="button" class="ghost sm" (click)="showAttempts(d)">Intentos</button>
                   @if (d.status === 'rejected' || d.status === 'temporary_error' || d.status === 'unknown') {

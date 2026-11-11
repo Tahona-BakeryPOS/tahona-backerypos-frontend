@@ -125,7 +125,7 @@ export class IntegrationsPage {
   private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly webhookUrl = `${location.origin}/api/v1/webhooks/pagos/bold`;
+  protected readonly webhookUrl = `${location.origin}/api/v1/webhooks/payments/bold`;
   protected readonly keysAction = new AsyncAction(this.toast);
   protected readonly boldAction = new AsyncAction(this.toast);
   protected readonly testAction = new AsyncAction(this.toast);

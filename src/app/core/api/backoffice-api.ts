@@ -5,7 +5,7 @@ import {
   StockMovementDto, StockRowDto, BranchDto, CashRegisterDto, CashSessionDto, CategoryDto,
   CompanyDto, CreateBranchRequest, CreateCashRegisterRequest, CreateCompanyRequest, CreateProductRequest,
   CreateUserRequest, CreatedCompanyDto, CreatedUserDto, DeviceDto, FiscalAttemptDto, FiscalDocumentDto, FiscalMappingDto, FiscalSettingsDto, SiigoCatalogsDto, PagedResult, PairingCodeDto,
-  BoldMethodStatus, BoldTerminal, GatewayAccountDto, PaymentDto, PaymentMethodDto, PaymentMethodKind, RegisterTerminalDto, PlatformCompanyDto, ProductDto, ProductPriceDto, RoleDto, SaleDto, SaleListItemV2, SaleReturnListItem, SalesReportDto,
+  BoldMethodStatus, BoldTerminal, GatewayAccountDto, PaymentDto, PaymentMethodDto, PaymentMethodKind, RegisterTerminalDto, PlatformCompanyDto, ProductDto, ProductPriceDto, RoleDto, SaleDto, SaleListItem, SaleReturnListItem, SalesReportDto,
   SetPriceRequest, TaxDto, TaxKind, UnitDto, UpdateBranchRequest, UpdateCompanyRequest, UpdateProductRequest,
   UpdateUserRequest, UserDto,
 } from './api.models';
@@ -27,80 +27,80 @@ export class BackofficeApi {
 
   // Plataforma (D-09)
   platformCompanies(): Promise<PlatformCompanyDto[]> {
-    return this.api.get('/plataforma/empresas');
+    return this.api.get('/platform/companies');
   }
 
   /** No Idempotency-Key on purpose (I-14): the response carries the one-time password. */
   createCompany(body: CreateCompanyRequest): Promise<CreatedCompanyDto> {
-    return this.api.post('/plataforma/empresas', body);
+    return this.api.post('/platform/companies', body);
   }
 
-  // Mi negocio
+  // My business
   company(): Promise<CompanyDto> {
-    return this.api.get('/empresa');
+    return this.api.get('/company');
   }
 
   updateCompany(body: UpdateCompanyRequest, version: string): Promise<CompanyDto> {
-    return this.api.put('/empresa', body, { ifMatch: version });
+    return this.api.put('/company', body, { ifMatch: version });
   }
 
   branches(): Promise<BranchDto[]> {
-    return this.api.get('/sucursales');
+    return this.api.get('/branches');
   }
 
   createBranch(body: CreateBranchRequest, idempotencyKey = newIdempotencyKey()): Promise<BranchDto> {
-    return this.api.post('/sucursales', body, { idempotencyKey });
+    return this.api.post('/branches', body, { idempotencyKey });
   }
 
   updateBranch(id: string, body: UpdateBranchRequest, version: string): Promise<BranchDto> {
-    return this.api.put(`/sucursales/${id}`, body, { ifMatch: version });
+    return this.api.put(`/branches/${id}`, body, { ifMatch: version });
   }
 
   deactivateBranch(id: string): Promise<BranchDto> {
-    return this.api.post(`/sucursales/${id}/desactivar`);
+    return this.api.post(`/branches/${id}/deactivate`);
   }
 
   cashRegisters(branchId?: string): Promise<CashRegisterDto[]> {
-    return this.api.get('/cajas', { branchId });
+    return this.api.get('/cash-registers', { branchId });
   }
 
   createCashRegister(body: CreateCashRegisterRequest, idempotencyKey = newIdempotencyKey()): Promise<CashRegisterDto> {
-    return this.api.post('/cajas', body, { idempotencyKey });
+    return this.api.post('/cash-registers', body, { idempotencyKey });
   }
 
   devices(): Promise<DeviceDto[]> {
-    return this.api.get('/dispositivos');
+    return this.api.get('/devices');
   }
 
   createPairingCode(cashRegisterId: string): Promise<PairingCodeDto> {
-    return this.api.post(`/cajas/${cashRegisterId}/codigos-vinculacion`);
+    return this.api.post(`/cash-registers/${cashRegisterId}/pairing-codes`);
   }
 
   deactivateDevice(id: string): Promise<DeviceDto> {
-    return this.api.post(`/dispositivos/${id}/desactivar`);
+    return this.api.post(`/devices/${id}/deactivate`);
   }
 
-  // Usuarios y roles
+  // Users and roles
   users(): Promise<UserDto[]> {
-    return this.api.get('/usuarios');
+    return this.api.get('/users');
   }
 
   /** No Idempotency-Key on purpose (I-14): the response may carry the one-time password. */
   createUser(body: CreateUserRequest): Promise<CreatedUserDto> {
-    return this.api.post('/usuarios', body);
+    return this.api.post('/users', body);
   }
 
   updateUser(id: string, body: UpdateUserRequest, version: string): Promise<UserDto> {
-    return this.api.put(`/usuarios/${id}`, body, { ifMatch: version });
+    return this.api.put(`/users/${id}`, body, { ifMatch: version });
   }
 
   addAssignment(userId: string, body: AssignmentInput, idempotencyKey = newIdempotencyKey()): Promise<AssignmentDto> {
-    return this.api.post(`/usuarios/${userId}/asignaciones`, body, { idempotencyKey });
+    return this.api.post(`/users/${userId}/assignments`, body, { idempotencyKey });
   }
 
   /** Closes the assignment's validity; it does not delete it. */
   endAssignment(userId: string, assignmentId: string): Promise<void> {
-    return this.api.delete(`/usuarios/${userId}/asignaciones/${assignmentId}`);
+    return this.api.delete(`/users/${userId}/assignments/${assignmentId}`);
   }
 
   roles(): Promise<RoleDto[]> {
@@ -109,198 +109,198 @@ export class BackofficeApi {
 
   // Catalog (phase 3)
   categories(): Promise<CategoryDto[]> {
-    return this.api.get('/categorias');
+    return this.api.get('/categories');
   }
 
   createCategory(name: string, displayOrder: number, idempotencyKey = newIdempotencyKey()): Promise<CategoryDto> {
-    return this.api.post('/categorias', { name, displayOrder }, { idempotencyKey });
+    return this.api.post('/categories', { name, displayOrder }, { idempotencyKey });
   }
 
   updateCategory(c: CategoryDto, changes: { name: string; displayOrder: number; isActive: boolean }): Promise<CategoryDto> {
-    return this.api.put(`/categorias/${c.id}`, changes, { ifMatch: c.version });
+    return this.api.put(`/categories/${c.id}`, changes, { ifMatch: c.version });
   }
 
   taxes(): Promise<TaxDto[]> {
-    return this.api.get('/impuestos');
+    return this.api.get('/taxes');
   }
 
   createTax(body: { code: string; name: string; kind: TaxKind; rate: number }, idempotencyKey = newIdempotencyKey()): Promise<TaxDto> {
-    return this.api.post('/impuestos', body, { idempotencyKey });
+    return this.api.post('/taxes', body, { idempotencyKey });
   }
 
   updateTax(t: TaxDto, changes: { name: string; isActive: boolean }): Promise<TaxDto> {
-    return this.api.put(`/impuestos/${t.id}`, changes, { ifMatch: t.version });
+    return this.api.put(`/taxes/${t.id}`, changes, { ifMatch: t.version });
   }
 
   units(): Promise<UnitDto[]> {
-    return this.api.get('/unidades');
+    return this.api.get('/units');
   }
 
   products(q: { branchId?: string | null; search?: string; categoryId?: string | null; includeInactive?: boolean; page?: number; pageSize?: number }): Promise<PagedResult<ProductDto>> {
-    return this.api.get('/productos', {
-      sucursalId: q.branchId, buscar: q.search, categoriaId: q.categoryId, incluirInactivos: q.includeInactive,
+    return this.api.get('/products', {
+      branchId: q.branchId, search: q.search, categoryId: q.categoryId, includeInactive: q.includeInactive,
       page: q.page ?? 1, pageSize: q.pageSize ?? 50,
     });
   }
 
   createProduct(body: CreateProductRequest, idempotencyKey = newIdempotencyKey()): Promise<ProductDto> {
-    return this.api.post('/productos', body, { idempotencyKey });
+    return this.api.post('/products', body, { idempotencyKey });
   }
 
   updateProduct(p: ProductDto, body: UpdateProductRequest): Promise<ProductDto> {
-    return this.api.put(`/productos/${p.id}`, body, { ifMatch: p.version });
+    return this.api.put(`/products/${p.id}`, body, { ifMatch: p.version });
   }
 
   setProductActive(id: string, active: boolean): Promise<ProductDto> {
-    return this.api.post(`/productos/${id}/${active ? 'activar' : 'desactivar'}`);
+    return this.api.post(`/products/${id}/${active ? 'activar' : 'desactivar'}`);
   }
 
   productPrices(id: string): Promise<ProductPriceDto[]> {
-    return this.api.get(`/productos/${id}/precios`);
+    return this.api.get(`/products/${id}/prices`);
   }
 
   setPrice(productId: string, body: SetPriceRequest, idempotencyKey = newIdempotencyKey()): Promise<ProductPriceDto> {
-    return this.api.post(`/productos/${productId}/precios`, body, { idempotencyKey });
+    return this.api.post(`/products/${productId}/prices`, body, { idempotencyKey });
   }
 
   setAvailability(branchId: string, productId: string, isAvailable: boolean): Promise<void> {
-    return this.api.put(`/sucursales/${branchId}/productos/${productId}/disponibilidad`, { isAvailable });
+    return this.api.put(`/branches/${branchId}/products/${productId}/availability`, { isAvailable });
   }
 
-  // Inventario (fase 4)
+  // Inventory (phase 4)
   stock(q: { branchId: string; locationId?: string | null; search?: string; page?: number; pageSize?: number }): Promise<PagedResult<StockRowDto>> {
-    return this.api.get('/existencias', { sucursalId: q.branchId, ubicacionId: q.locationId, buscar: q.search, page: q.page ?? 1, pageSize: q.pageSize ?? 50 });
+    return this.api.get('/stock', { branchId: q.branchId, locationId: q.locationId, search: q.search, page: q.page ?? 1, pageSize: q.pageSize ?? 50 });
   }
 
   stockMovements(q: { branchId: string; locationId?: string | null; productId?: string | null; kind?: string | null; from?: string | null; to?: string | null; page: number; pageSize?: number }): Promise<PagedResult<StockMovementDto>> {
-    return this.api.get('/movimientos-inventario', {
-      sucursalId: q.branchId, ubicacionId: q.locationId, productoId: q.productId, tipo: q.kind, desde: q.from, hasta: q.to,
+    return this.api.get('/inventory-movements', {
+      branchId: q.branchId, locationId: q.locationId, productId: q.productId, type: q.kind, from: q.from, to: q.to,
       page: q.page, pageSize: q.pageSize ?? 50,
     });
   }
 
   stockLocations(branchId?: string | null): Promise<StockLocationDto[]> {
-    return this.api.get('/ubicaciones', { sucursalId: branchId });
+    return this.api.get('/locations', { branchId: branchId });
   }
 
   createStockLocation(body: { branchId: string; code: string; name: string }, idempotencyKey = newIdempotencyKey()): Promise<StockLocationDto> {
-    return this.api.post('/ubicaciones', body, { idempotencyKey });
+    return this.api.post('/locations', body, { idempotencyKey });
   }
 
   adjustmentReasons(): Promise<AdjustmentReasonDto[]> {
-    return this.api.get('/inventario/motivos');
+    return this.api.get('/inventory/reasons');
   }
 
   registerInitialStock(body: { locationId: string; lines: { productId: string; quantity: number }[]; note: string | null }, idempotencyKey: string): Promise<StockMovementDto[]> {
-    return this.api.post('/inventario/inicial', body, { idempotencyKey });
+    return this.api.post('/inventory/initial', body, { idempotencyKey });
   }
 
   registerAdjustment(body: { locationId: string; productId: string; quantity: number; reasonId: string; note: string | null }, idempotencyKey: string): Promise<StockMovementDto> {
-    return this.api.post('/inventario/ajustes', body, { idempotencyKey });
+    return this.api.post('/inventory/adjustments', body, { idempotencyKey });
   }
 
   registerCount(body: { locationId: string; lines: { productId: string; counted: number }[]; note: string | null }, idempotencyKey: string): Promise<CountResultLine[]> {
-    return this.api.post('/inventario/conteos', body, { idempotencyKey });
+    return this.api.post('/inventory/counts', body, { idempotencyKey });
   }
 
   reconciliation(branchId?: string | null): Promise<ReconciliationDto> {
-    return this.api.get('/inventario/reconciliacion', { sucursalId: branchId });
+    return this.api.get('/inventory/reconciliation', { branchId: branchId });
   }
 
-  // Ventas y caja (v1, fases 5, 6 y 9)
-  // Ventas (fase 8)
-  salesV2(range: DateRange, status: string | null, page: number, pageSize = 50): Promise<PagedResult<SaleListItemV2>> {
-    return this.api.get('/ventas', {
-      desde: new Date(`${range.from}T00:00:00`).toISOString(), hasta: new Date(`${range.to}T23:59:59.999`).toISOString(),
-      sucursalId: range.branchId, estado: status, page, pageSize,
+  // Sales and cash (phases 5, 6 and 9)
+  // Sales (phase 8)
+  listSales(range: DateRange, status: string | null, page: number, pageSize = 50): Promise<PagedResult<SaleListItem>> {
+    return this.api.get('/sales', {
+      from: new Date(`${range.from}T00:00:00`).toISOString(), to: new Date(`${range.to}T23:59:59.999`).toISOString(),
+      branchId: range.branchId, status: status, page, pageSize,
     });
   }
 
-  saleV2(id: string): Promise<SaleDto> {
-    return this.api.get(`/ventas/${id}`);
+  getSale(id: string): Promise<SaleDto> {
+    return this.api.get(`/sales/${id}`);
   }
 
-  // Devoluciones e informes (fase 9)
+  // Returns and reports (phase 9)
   saleReturns(range: DateRange, page: number, pageSize = 50): Promise<PagedResult<SaleReturnListItem>> {
-    return this.api.get('/devoluciones', {
-      desde: new Date(`${range.from}T00:00:00`).toISOString(), hasta: new Date(`${range.to}T23:59:59.999`).toISOString(),
-      sucursalId: range.branchId, page, pageSize,
+    return this.api.get('/returns', {
+      from: new Date(`${range.from}T00:00:00`).toISOString(), to: new Date(`${range.to}T23:59:59.999`).toISOString(),
+      branchId: range.branchId, page, pageSize,
     });
   }
 
   /** Colombian days (yyyy-MM-dd), inclusive. */
   salesReport(range: DateRange): Promise<SalesReportDto> {
-    return this.api.get('/informes/ventas', { desde: range.from, hasta: range.to, sucursalId: range.branchId });
+    return this.api.get('/reports/sales', { from: range.from, to: range.to, branchId: range.branchId });
   }
 
   /** Cash sessions open in the range (whole days in local time). */
   cashSessions(range: DateRange, status: 'open' | 'closed' | null): Promise<CashSessionDto[]> {
-    return this.api.get('/sesiones-caja', {
-      desde: new Date(`${range.from}T00:00:00`).toISOString(), hasta: new Date(`${range.to}T23:59:59.999`).toISOString(),
-      sucursalId: range.branchId, estado: status,
+    return this.api.get('/cash-sessions', {
+      from: new Date(`${range.from}T00:00:00`).toISOString(), to: new Date(`${range.to}T23:59:59.999`).toISOString(),
+      branchId: range.branchId, status: status,
     });
   }
 
-  // Pagos (fase 6)
+  // Payments (phase 6)
   paymentMethods(): Promise<PaymentMethodDto[]> {
-    return this.api.get('/medios-pago');
+    return this.api.get('/payment-methods');
   }
 
   createPaymentMethod(body: { code: string; name: string; kind: PaymentMethodKind; gatewayMethod: string | null; requiresReference: boolean; displayOrder: number },
     idempotencyKey = newIdempotencyKey()): Promise<PaymentMethodDto> {
-    return this.api.post('/medios-pago', body, { idempotencyKey });
+    return this.api.post('/payment-methods', body, { idempotencyKey });
   }
 
   updatePaymentMethod(m: PaymentMethodDto, changes: { name: string; requiresReference: boolean; displayOrder: number; isActive: boolean }): Promise<PaymentMethodDto> {
-    return this.api.put(`/medios-pago/${m.id}`, changes, { ifMatch: m.version });
+    return this.api.put(`/payment-methods/${m.id}`, changes, { ifMatch: m.version });
   }
 
   gatewayAccounts(): Promise<GatewayAccountDto[]> {
-    return this.api.get('/integraciones/pasarela');
+    return this.api.get('/integrations/gateway');
   }
 
   /** Null keys = keep the stored ones. They are never returned. */
   saveGatewayAccount(body: { environment: 'sandbox' | 'production'; identityKey: string | null; secretKey: string | null; sellerEmail: string; activate: boolean }): Promise<GatewayAccountDto> {
-    return this.api.put('/integraciones/pasarela', body);
+    return this.api.put('/integrations/gateway', body);
   }
 
   boldTerminals(): Promise<BoldTerminal[]> {
-    return this.api.get('/integraciones/pasarela/datafonos');
+    return this.api.get('/integrations/gateway/terminals');
   }
 
   boldMethods(): Promise<BoldMethodStatus[]> {
-    return this.api.get('/integraciones/pasarela/metodos');
+    return this.api.get('/integrations/gateway/methods');
   }
 
   registerTerminals(): Promise<RegisterTerminalDto[]> {
-    return this.api.get('/integraciones/pasarela/cajas');
+    return this.api.get('/integrations/gateway/cash-registers');
   }
 
   setRegisterTerminal(cashRegisterId: string, terminalModel: string, terminalSerial: string): Promise<RegisterTerminalDto> {
-    return this.api.put(`/cajas/${cashRegisterId}/datafono`, { terminalModel, terminalSerial });
+    return this.api.put(`/cash-registers/${cashRegisterId}/terminal`, { terminalModel, terminalSerial });
   }
 
   testCharge(body: { cashRegisterId: string; paymentMethodId: string; amount: number }, idempotencyKey: string): Promise<PaymentDto> {
-    return this.api.post('/integraciones/pasarela/prueba', body, { idempotencyKey });
+    return this.api.post('/integrations/gateway/test', body, { idempotencyKey });
   }
 
   payment(id: string): Promise<PaymentDto> {
-    return this.api.get(`/pagos/${id}`);
+    return this.api.get(`/payments/${id}`);
   }
 
   payments(range: DateRange, status: string | null): Promise<PaymentDto[]> {
-    return this.api.get('/pagos', {
-      desde: new Date(`${range.from}T00:00:00`).toISOString(), hasta: new Date(`${range.to}T23:59:59.999`).toISOString(), estado: status,
+    return this.api.get('/payments', {
+      from: new Date(`${range.from}T00:00:00`).toISOString(), to: new Date(`${range.to}T23:59:59.999`).toISOString(), status: status,
     });
   }
 
   resolvePayment(id: string, body: { resolution: 'approved' | 'declined' | 'cancelled'; approvalNumber: string | null; note: string }): Promise<PaymentDto> {
-    return this.api.post(`/pagos/${id}/resolver`, body);
+    return this.api.post(`/payments/${id}/resolve`, body);
   }
 
   // Electronic invoicing with Siigo (phase 7)
   fiscalSettings(): Promise<FiscalSettingsDto> {
-    return this.api.get('/facturacion/configuracion');
+    return this.api.get('/invoicing/settings');
   }
 
   /** A null user and key = keep the stored ones. They are never returned. */
@@ -308,49 +308,49 @@ export class BackofficeApi {
     username: string | null; accessKey: string | null; invoiceDocumentTypeId: number | null; creditNoteDocumentTypeId: number | null;
     sellerId: number | null; productAccountGroupId: number | null; consumerFinalIdentification: string; retentionYears: number; activate: boolean;
   }): Promise<FiscalSettingsDto> {
-    return this.api.put('/facturacion/configuracion', body);
+    return this.api.put('/invoicing/settings', body);
   }
 
   siigoCatalogs(): Promise<SiigoCatalogsDto> {
-    return this.api.get('/facturacion/siigo/catalogos');
+    return this.api.get('/invoicing/siigo/catalogs');
   }
 
   fiscalMappings(): Promise<FiscalMappingDto[]> {
-    return this.api.get('/facturacion/mapeos');
+    return this.api.get('/invoicing/mappings');
   }
 
   saveFiscalMappings(mappings: FiscalMappingDto[]): Promise<FiscalMappingDto[]> {
-    return this.api.put('/facturacion/mapeos', { mappings });
+    return this.api.put('/invoicing/mappings', { mappings });
   }
 
   testInvoice(body: { productId: string; quantity: number; paymentMethodId: string; confirmTestEnvironment: boolean }, idempotencyKey: string): Promise<FiscalDocumentDto> {
-    return this.api.post('/facturacion/prueba', body, { idempotencyKey });
+    return this.api.post('/invoicing/test', body, { idempotencyKey });
   }
 
   fiscalDocuments(range: DateRange, status: string | null): Promise<FiscalDocumentDto[]> {
-    return this.api.get('/documentos-fiscales', {
-      desde: new Date(`${range.from}T00:00:00`).toISOString(), hasta: new Date(`${range.to}T23:59:59.999`).toISOString(), estado: status,
+    return this.api.get('/fiscal-documents', {
+      from: new Date(`${range.from}T00:00:00`).toISOString(), to: new Date(`${range.to}T23:59:59.999`).toISOString(), status: status,
     });
   }
 
   fiscalAttempts(id: string): Promise<FiscalAttemptDto[]> {
-    return this.api.get(`/documentos-fiscales/${id}/intentos`);
+    return this.api.get(`/fiscal-documents/${id}/attempts`);
   }
 
   fiscalDocumentPdf(id: string): Promise<Blob> {
-    return this.api.getBlob(`/documentos-fiscales/${id}/pdf`);
+    return this.api.getBlob(`/fiscal-documents/${id}/pdf`);
   }
 
   retryFiscalDocument(id: string): Promise<FiscalDocumentDto> {
-    return this.api.post(`/documentos-fiscales/${id}/reintentar`);
+    return this.api.post(`/fiscal-documents/${id}/retry`);
   }
 
   // Audit (phase 3)
   auditLog(q: { entity?: string | null; from?: string | null; to?: string | null; page: number; pageSize?: number }): Promise<PagedResult<AuditLogDto>> {
-    return this.api.get('/auditoria', { entidad: q.entity, desde: q.from, hasta: q.to, page: q.page, pageSize: q.pageSize ?? 50 });
+    return this.api.get('/audit', { entity: q.entity, from: q.from, to: q.to, page: q.page, pageSize: q.pageSize ?? 50 });
   }
 
   auditEntities(): Promise<string[]> {
-    return this.api.get('/auditoria/entidades');
+    return this.api.get('/audit/entities');
   }
 }

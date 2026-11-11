@@ -10,13 +10,13 @@ import { SessionStore } from './session.store';
  * The backoffice does not depend on the register: it signs in with email and password from any device.
  */
 export const devicePairedGuard: CanActivateFn = () =>
-  inject(DeviceConfigStore).isPaired() || inject(Router).createUrlTree(['/vincular']);
+  inject(DeviceConfigStore).isPaired() || inject(Router).createUrlTree(['/pair-device']);
 
 export const authGuard: CanActivateFn = () =>
   inject(SessionStore).user()?.kind === 'pos' || inject(Router).createUrlTree(['/login']);
 
 export const shiftOpenGuard: CanActivateFn = () =>
-  inject(ShiftStore).isOpen() || inject(Router).createUrlTree(['/turno']);
+  inject(ShiftStore).isOpen() || inject(Router).createUrlTree(['/shift']);
 
 /** If a shift is already open, it makes no sense to show "Abrir turno". */
 export const noShiftGuard: CanActivateFn = () =>
@@ -30,7 +30,7 @@ export const backofficeGuard: CanActivateFn = () => {
   const s = inject(SessionStore);
   const u = s.user();
   const ready = u?.kind === 'backoffice' && !u.mustChangePassword && (s.canAny(BACKOFFICE_PERMS) || s.can(Perm.platformAdmin));
-  return ready || inject(Router).createUrlTree(['/backoffice/ingresar']);
+  return ready || inject(Router).createUrlTree(['/backoffice/sign-in']);
 };
 
 export const permissionGuard =
@@ -42,10 +42,10 @@ export const permissionGuard =
 
 /** First backoffice screen according to the session. */
 export function landingFor(s: SessionStore): string {
-  if (s.can(Perm.reportsView)) return '/backoffice/panel';
-  if (s.can(Perm.organizationManage)) return '/backoffice/negocio/empresa';
-  if (s.canAny([Perm.catalogManage, Perm.branchPrices])) return '/backoffice/productos/catalogo';
-  if (s.can(Perm.inventoryView)) return '/backoffice/inventario/existencias';
-  if (s.can(Perm.platformAdmin)) return '/backoffice/plataforma/empresas';
+  if (s.can(Perm.reportsView)) return '/backoffice/dashboard';
+  if (s.can(Perm.organizationManage)) return '/backoffice/business/company';
+  if (s.canAny([Perm.catalogManage, Perm.branchPrices])) return '/backoffice/products/catalog';
+  if (s.can(Perm.inventoryView)) return '/backoffice/inventory/stock';
+  if (s.can(Perm.platformAdmin)) return '/backoffice/platform/companies';
   return '/backoffice/sin-acceso';
 }

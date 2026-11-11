@@ -41,9 +41,9 @@ export class CashStore {
    * and, if whoever is serving does not hold cash.withdrawal, it goes with the authorizing supervisor's token.
    */
   async register(kind: 'income' | 'expense', amount: number, reasonId: string, note: string | null, idempotencyKey: string, authorizerToken?: string): Promise<void> {
-    if (!(amount > 0)) throw new ApiError('VALIDACION', 'El monto debe ser mayor a cero.', 400);
+    if (!(amount > 0)) throw new ApiError('VALIDATION', 'El monto debe ser mayor a cero.', 400);
     if (kind === 'expense' && amount > this.expected()) {
-      throw new ApiError('RETIRO_EXCEDE_SALDO', 'El retiro supera el efectivo esperado en caja.', 422);
+      throw new ApiError('WITHDRAWAL_EXCEEDS_BALANCE', 'El retiro supera el efectivo esperado en caja.', 422);
     }
     await this.api.registerMovement(this.shifts.shift()!.id, { kind, amount, reasonId, note }, idempotencyKey, authorizerToken);
     await this.load();

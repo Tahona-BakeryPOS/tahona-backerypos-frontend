@@ -17,7 +17,7 @@ describe('CartStore', () => {
     cart = TestBed.inject(CartStore);
   });
 
-  it('acumula unidades del mismo producto en una línea', () => {
+  it('accumulates units of the same product in one line', () => {
     cart.add(pan);
     cart.add(pan);
     expect(cart.lines()).toHaveLength(1);
@@ -25,7 +25,7 @@ describe('CartStore', () => {
     expect(cart.totals().total).toBe(5950);
   });
 
-  it('cada pesada es una línea y el paso es 0,25', () => {
+  it('each weighing is its own line and the step is 0.25', () => {
     cart.add(torta, 0.5);
     cart.add(torta, 1);
     expect(cart.lines()).toHaveLength(2);
@@ -33,13 +33,13 @@ describe('CartStore', () => {
     expect(cart.lines()[0].quantity).toBe(0.75);
   });
 
-  it('quitar hasta cero elimina la línea', () => {
+  it('removing down to zero deletes the line', () => {
     cart.add(pan);
     cart.step(cart.lines()[0].key, -1);
     expect(cart.isEmpty()).toBe(true);
   });
 
-  it('el descuento reduce el bruto con IVA incluido', () => {
+  it('the discount reduces the gross with VAT included', () => {
     cart.add(pan, 2);
     cart.discount(cart.lines()[0].key, 10, 'Cortesía');
     expect(cart.totals()).toEqual({ subtotal: 4500, discount: 595, tax: 855, total: 5355 });

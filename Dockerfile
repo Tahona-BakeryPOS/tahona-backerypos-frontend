@@ -1,5 +1,5 @@
-# Frontend (PWA) para staging/producción: se compila y lo sirve Caddy, que además termina HTTPS y hace de
-# proxy de /api hacia el API (API_UPSTREAM). Todo vive en este repo (Caddyfile y deploy/); no depende del backend.
+# Frontend (PWA) for staging/production: it is built and served by Caddy, which also terminates HTTPS and
+# proxies /api to the API (API_UPSTREAM). Everything lives in this repo (Caddyfile and deploy/); it does not depend on the backend.
 FROM node:24-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./

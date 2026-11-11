@@ -39,7 +39,7 @@ import { ShiftStore } from '../../core/shift/shift.store';
         </div>
         <p class="err small" role="alert" style="min-height:18px">{{ error() }}</p>
         <button class="primary block" type="submit" [disabled]="busy()">{{ busy() ? 'Vinculando…' : 'Vincular' }}</button>
-        <p class="hint">¿Eres el propietario? <a routerLink="/backoffice/ingresar">Entra al backoffice</a></p>
+        <p class="hint">¿Eres el propietario? <a routerLink="/backoffice/sign-in">Entra al backoffice</a></p>
       </form>
     </div>
   `,

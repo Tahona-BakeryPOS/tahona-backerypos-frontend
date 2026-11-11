@@ -38,7 +38,7 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
             } @empty { <tr><td colspan="3" class="state">{{ branches.isLoading() ? 'Cargando…' : 'Sin sucursales' }}</td></tr> }
           </tbody>
         </table>
-        <a routerLink="../informes/ventas" class="small">Ver el informe de ventas →</a>
+        <a routerLink="../reports/sales" class="small">Ver el informe de ventas →</a>
       </section>
 
       <section class="card pad">
@@ -55,7 +55,7 @@ import { BO_PAGE_STYLES } from '../backoffice.styles';
             } @empty { <tr><td colspan="3" class="state">{{ shifts.isLoading() ? 'Cargando…' : 'Sin diferencias: todas las cajas cuadraron.' }}</td></tr> }
           </tbody>
         </table>
-        <a routerLink="../ventas/cierres" class="small">Ver todos los cierres →</a>
+        <a routerLink="../sales/closings" class="small">Ver todos los cierres →</a>
       </section>
     </div>
   `,

@@ -138,10 +138,10 @@ export class LoginPage {
       const r = await this.api.loginPin({ userId: this.selected()!.userId, pin: this.pin() }, this.device.deviceToken()!);
       this.session.start(r, 'pos');
       // Shifts and sales are still on the previous API: they are adapted in phases 5 and 8.
-      void this.router.navigate([this.shifts.isOpen() ? '/pos' : '/turno']);
+      void this.router.navigate([this.shifts.isOpen() ? '/pos' : '/shift']);
     } catch (e) {
       const err = toApiError(e);
-      // 423 USUARIO_BLOQUEADO brings its own message with the wait.
+      // 423 USER_LOCKED brings its own message with the wait.
       if (err.status === 401) this.error.set('PIN incorrecto.');
       else this.handleDeviceError(e);
     } finally {
@@ -153,9 +153,9 @@ export class LoginPage {
   /** An unpaired device (or one whose register was deactivated) goes back to the pairing screen. */
   private handleDeviceError(e: unknown): void {
     const err = toApiError(e);
-    if (err.code === 'DISPOSITIVO_NO_VINCULADO') {
+    if (err.code === 'DEVICE_NOT_PAIRED') {
       this.device.unpair();
-      void this.router.navigate(['/vincular']);
+      void this.router.navigate(['/pair-device']);
       return;
     }
     this.error.set(err.isNetwork ? 'Sin conexión: el inicio de sesión necesita el servidor.' : err.message);

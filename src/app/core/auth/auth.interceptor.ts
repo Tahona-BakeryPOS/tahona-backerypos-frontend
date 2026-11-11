@@ -59,5 +59,5 @@ const isAuthCall = (url: string) => /\/auth\/(login|login-pin|refresh)$/.test(ur
 
 function endSession(session: SessionStore, router: Router, kind: 'backoffice' | 'pos'): void {
   session.end();
-  void router.navigate([kind === 'backoffice' ? '/backoffice/ingresar' : '/login']);
+  void router.navigate([kind === 'backoffice' ? '/backoffice/sign-in' : '/login']);
 }
